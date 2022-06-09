@@ -21,7 +21,8 @@ exports.login = [
       .trim()
       .isLength({ min: 1 })
       .withMessage("Email must be specified.")
-      .isEmail().withMessage("Email must be a valid email address."),
+      .isEmail()
+      .withMessage("Email must be a valid email address."),
     body("password")
       .trim()
       .isLength({ min: 1 })
@@ -79,12 +80,12 @@ exports.forgotPassword = [
          // Generate otp
     let otp = utility.randomNumber(6);
        // Html email body
-    let html = "<p>Forgot  password </p><p>OTP: "+otp+"</p>";
+    let html = "<p>Waldner Verification code</p><p>OTP: "+otp+"</p>";
         // Send confirmation email
         mailer.send(
         `walnder <${constants.confirmEmails.from}>`, 
         req.body.email,
-        "Forgot Password - OTP",
+        "Waldner - OTP",
         html
         ).then(async function(){
         const result = await admin.update({otp:otp}, {where:{id:user.id}});
@@ -107,7 +108,8 @@ exports.forgotPassword = [
         .trim()
         .isLength({ min: 1 })
         .withMessage("Email must be specified.")
-        .isEmail().withMessage("Email must be a valid email address."),
+        .isEmail()
+        .withMessage("Email must be a valid email address."),
     body("otp")
         .trim()
         .isLength({ min: 1 })
@@ -121,9 +123,9 @@ exports.forgotPassword = [
     const { email,otp } = req.body;
     const user = await admin.findOne({where:{otp:otp,email:email}});
     if (user) {
-        return apiResponse.successResponse(res,"Otp verified successfully.");
+        return apiResponse.successResponse(res,"OTP verified successfully.");
     }else{
-        return apiResponse.unauthorizedResponse(res, "Specified otp not found.");
+        return apiResponse.unauthorizedResponse(res, "Specified OTP not found.");
     }
  }
     } catch (err) {
@@ -144,14 +146,10 @@ exports.resetPassword = [
       .withMessage("Password must be 6 characters or greater."),
     body('confirm-password').custom((value, { req }) => {
     if (value !== req.body.password) {
-        throw new Error('Password confirmation does not match password');
+        throw new Error("Confirm Password Doesn't match to your Password");
      }     
         return true;
     }),
-    body("otp")
-      .trim()
-      .isLength({ min: 1 })
-      .withMessage("OTP must be specified."),
     body("password").escape(),
     body("otp").escape(),
     async (req, res) => {
@@ -162,8 +160,7 @@ exports.resetPassword = [
     }else {
     const { email,otp } = req.body;
     const user = await admin.findOne({where:{email:email}});
-    if (user) {
-        if(user.otp == otp){                         
+    if (user) {                     
     if (req.body.password) {
         const pass = await bcrypt.hash(req.body.password, 10);
         const result = await admin.update({password:pass,otp:null},{where:{id:user.id}});
@@ -174,18 +171,7 @@ exports.resetPassword = [
     }
     else{
         return apiResponse.unauthorizedResponse(res, "Something went wrong!");
-    }                          
-    }else{
-        let edata = [
-            {
-                "value": "",
-                "msg": "Otp does not match",
-                "param": "otp",
-                "location": "body"
-            }
-        ];
-        return apiResponse.unauthorizedResponse(res, "Invalid Otp",edata);
-    }                 
+    }                                       
     }else{
         return apiResponse.unauthorizedResponse(res, "Invalid email");
     }                 
