@@ -22,7 +22,10 @@ exports.login = [
       .isLength({ min: 1 })
       .withMessage("Email must be specified.")
       .isEmail().withMessage("Email must be a valid email address."),
-    body("password").isLength({ min: 1 }).trim().withMessage("Password must be specified."),
+    body("password")
+      .trim()
+      .isLength({ min: 1 })
+      .withMessage("Password must be specified."),
     async (req, res) => {
     try {
         const errors = validationResult(req);
@@ -58,8 +61,9 @@ exports.login = [
 
 exports.forgotPassword = [
     body("email")
+      .trim()
       .isLength({ min: 1 })
-      .trim().withMessage("Email must be specified.")
+      .withMessage("Email must be specified.")
       .isEmail()
       .withMessage("Email must be a valid email address."),
     body("email").escape(),
@@ -100,12 +104,13 @@ exports.forgotPassword = [
 
  exports.verifyOtp = [
     body("email")
+        .trim()
         .isLength({ min: 1 })
-        .trim().withMessage("Email must be specified.")
+        .withMessage("Email must be specified.")
         .isEmail().withMessage("Email must be a valid email address."),
     body("otp")
-        .isLength({ min: 1 })
         .trim()
+        .isLength({ min: 1 })
         .withMessage("OTP must be specified."),
     async (req, res) => {
     try {
@@ -128,14 +133,15 @@ exports.forgotPassword = [
 
 exports.resetPassword = [
     body("email")
-      .isLength({ min: 1 })
       .trim()
+      .isLength({ min: 1 })
       .withMessage("Email must be specified.") 
       .isEmail()
       .withMessage("Email must be a valid email address."),
     body("password")
+      .trim()
       .isLength({ min: 6 })
-      .trim().withMessage("Password must be 6 characters or greater."),
+      .withMessage("Password must be 6 characters or greater."),
     body('confirm-password').custom((value, { req }) => {
     if (value !== req.body.password) {
         throw new Error('Password confirmation does not match password');
@@ -143,8 +149,8 @@ exports.resetPassword = [
         return true;
     }),
     body("otp")
-      .isLength({ min: 1 })
       .trim()
+      .isLength({ min: 1 })
       .withMessage("OTP must be specified."),
     body("password").escape(),
     body("otp").escape(),
