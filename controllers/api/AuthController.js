@@ -27,16 +27,29 @@ require("dotenv").config();
 exports.register = [
   check("name")
     .trim()
+    .notEmpty()
+    .withMessage("Name is Required")
     .isAlpha("en-US", { ignore: " " })
     .withMessage("Must be only alphabetical chars"),
   check("username")
     .trim()
+    .notEmpty()
+    .withMessage("Username is Required")
     .isAlpha("en-US", { ignore: " " })
     .withMessage("Must be only alphabetical chars"),
-  body("gender").trim().isLength({ min: 1 }).withMessage("Gender is required."),
-  body("dob").trim().isLength({ min: 1 }).withMessage("DOB is required."),
+  body("gender")
+    .trim()
+    .notEmpty()
+    .isLength({ min: 1 })
+    .withMessage("Gender is required."),
+  body("dob")
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage("DOB is required."),
   body("email")
     .trim()
+    .notEmpty()
+    .withMessage("Email is Required")
     .isLength({ min: 1 })
     .withMessage("Email must be specified.")
     .isEmail()
@@ -78,23 +91,23 @@ exports.register = [
       return true;
     }),
   body("achievements")
-    .trim()
-    .custom((value, { req }) => {
-      if (req.body.user_type == "player" && !value)
-        throw new Error("achievements is required");
-      if (req.body.user_type == "coach" && !value)
-        throw new Error("Natioachievementsnality is required");
-      return true;
-    }),
+    .trim(),
+    // .custom((value, { req }) => {
+    //   if (req.body.user_type == "player" && !value)
+    //     throw new Error("achievements is required");
+    //   if (req.body.user_type == "coach" && !value)
+    //     throw new Error("achievements is required");
+    //   return true;
+    // }),
   body("career")
-    .trim()
-    .custom((value, { req }) => {
-      if (req.body.user_type == "player" && !value)
-        throw new Error("career is required");
-      if (req.body.user_type == "coach" && !value)
-        throw new Error("career is required");
-      return true;
-    }),
+    .trim(),
+    // .custom((value, { req }) => {
+    //   if (req.body.user_type == "player" && !value)
+    //     throw new Error("career is required");
+    //   if (req.body.user_type == "coach" && !value)
+    //     throw new Error("career is required");
+    //   return true;
+    // }),
   body("phone")
     .trim()
     .isNumeric()
@@ -124,7 +137,7 @@ exports.register = [
   body("playing_style")
     .trim()
     .isAlpha("en-US", { ignore: " " })
-    .withMessage("Playing style Must be only alphabetical chars")
+    .withMessage("Playing style Must be in alphabetical chars")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
         throw new Error("playing style is required");
@@ -157,25 +170,25 @@ exports.register = [
   body("team")
     .trim()
     .isAlpha("en-US", { ignore: " " })
-    .withMessage("Team Must be only alphabetical chars")
-    .custom((value, { req }) => {
-      if (req.body.user_type == "player" && !value)
-        throw new Error("team is required");
-      if (req.body.user_type == "coach" && !value)
-        throw new Error("team is required");
-      return true;
-    }),
+    .withMessage("Team Must be only alphabetical chars"),
+    // .custom((value, { req }) => {
+    //   if (req.body.user_type == "player" && !value)
+    //     throw new Error("team is required");
+    //   if (req.body.user_type == "coach" && !value)
+    //     throw new Error("team is required");
+    //   return true;
+    // }),
   body("club")
     .trim()
     .isAlphanumeric("en-US", { ignore: " " })
-    .withMessage("Club Must be only alphanumeric")
-    .custom((value, { req }) => {
-      if (req.body.user_type == "player" && !value)
-        throw new Error("club is required");
-      if (req.body.user_type == "coach" && !value)
-        throw new Error("club is required");
-      return true;
-    }),
+    .withMessage("Club Must be only alphanumeric"),
+    // .custom((value, { req }) => {
+    //   if (req.body.user_type == "player" && !value)
+    //     throw new Error("club is required");
+    //   if (req.body.user_type == "coach" && !value)
+    //     throw new Error("club is required");
+    //   return true;
+    // }),
   body("favorite_serve")
     .trim()
     .isAlpha("en-US", { ignore: " " })
@@ -190,14 +203,14 @@ exports.register = [
   body("awards")
     .trim()
     .isAlpha("en-US", { ignore: " " })
-    .withMessage("Award Must be only Char")
-    .custom((value, { req }) => {
-      if (req.body.user_type == "player" && !value)
-        throw new Error("Award is required");
-      if (req.body.user_type == "coach" && !value)
-        throw new Error("Award  is required");
-      return true;
-    }),
+    .withMessage("Award Must be only Char"),
+    // .custom((value, { req }) => {
+    //   if (req.body.user_type == "player" && !value)
+    //     throw new Error("Award is required");
+    //   if (req.body.user_type == "coach" && !value)
+    //     throw new Error("Award  is required");
+    //   return true;
+    // }),
   body("street_address1")
     .trim()
     .custom((value, { req }) => {
@@ -241,15 +254,17 @@ exports.register = [
   //   throw new Error("user is required");
   // return true;
   // }),
-  //   body("street_address2").custom((value, { req }) => {
-  //     if (req.body.user_type == "player" && !value)
-  //       throw new Error("street_address2 is required");
-  //     if (req.body.user_type == "coach" && !value)
-  //       throw new Error("street_address2 is required");
-  //     if (req.body.user_type == "coach" && !value)
-  //       throw new Error("street_address2 is required");
-  //     return true;
-  //   }),
+    body("street_address2")
+      .trim(),
+    //   .custom((value, { req }) => {
+    //   if (req.body.user_type == "player" && !value)
+    //     throw new Error("street_address2 is required");
+    //   if (req.body.user_type == "coach" && !value)
+    //     throw new Error("street_address2 is required");
+    //   if (req.body.user_type == "coach" && !value)
+    //     throw new Error("street_address2 is required");
+    //   return true;
+    // }),
   body("zip_code")
     .trim()
     .isNumeric()
@@ -268,66 +283,66 @@ exports.register = [
         throw new Error("zip code is required");
       return true;
     }),
-  body("cvc_no")
-    .trim()
-    .isNumeric()
-    .withMessage("CVC Number Must be only Numeric")
-    .isLength({ min: 4, max: 4 })
-    .withMessage("CVC Number Must contain only 4 digit")
-    .custom((value, { req }) => {
-      if (req.body.user_type == "player" && !value)
-        throw new Error("cvc_no is required");
-      if (req.body.user_type == "coach" && !value)
-        throw new Error("cvc_no is required");
-      if (req.body.user_type == "user" && !value)
-        throw new Error("cvc_no is required");
-      return true;
-    }),
-  body("card_no")
-    .trim()
-    .isNumeric()
-    .withMessage("Card Number Must be only Numeric")
-    .isLength({ min: 16, max: 16 })
-    .withMessage("Card Number Must contain only 16 digit")
-    .custom((value, { req }) => {
-      if (req.body.user_type == "player" && !value)
-        throw new Error("card_no is required");
-      if (req.body.user_type == "coach" && !value)
-        throw new Error("card_no is required");
-      if (req.body.user_type == "user" && !value)
-        throw new Error("card_no is required");
-      return true;
-    }),
-  body("expiry_month")
-    .trim()
-    .isNumeric()
-    .withMessage("Expiry Month Must be only Numeric")
-    .isLength({ min: 2, max: 2 })
-    .withMessage("Expiry Month Must Contain Only 2 Digit")
-    .custom((value, { req }) => {
-      if (req.body.user_type == "player" && !value)
-        throw new Error("expiry_month is required");
-      if (req.body.user_type == "coach" && !value)
-        throw new Error("expiry_month is required");
-      if (req.body.user_type == "user" && !value)
-        throw new Error("expiry_year is required");
-      return true;
-    }),
-  body("expiry_year")
-    .trim()
-    .isNumeric()
-    .withMessage("Expiry Year Must be only Numeric")
-    .isLength({ min: 4, max: 4 })
-    .withMessage("Expiry Year Must Contain 4 Digit")
-    .custom((value, { req }) => {
-      if (req.body.user_type == "player" && !value)
-        throw new Error("expiry_year is required");
-      if (req.body.user_type == "coach" && !value)
-        throw new Error("expiry_year is required");
-      if (req.body.user_type == "user" && !value)
-        throw new Error("expiry_year is required");
-      return true;
-    }),
+  // body("cvc_no")
+  //   .trim()
+  //   .isNumeric()
+  //   .withMessage("CVC Number Must be only Numeric")
+  //   .isLength({ min: 4, max: 4 })
+  //   .withMessage("CVC Number Must contain only 4 digit")
+  //   .custom((value, { req }) => {
+  //     if (req.body.user_type == "player" && !value)
+  //       throw new Error("cvc_no is required");
+  //     if (req.body.user_type == "coach" && !value)
+  //       throw new Error("cvc_no is required");
+  //     if (req.body.user_type == "user" && !value)
+  //       throw new Error("cvc_no is required");
+  //     return true;
+  //   }),
+  // body("card_no")
+  //   .trim()
+  //   .isNumeric()
+  //   .withMessage("Card Number Must be only Numeric")
+  //   .isLength({ min: 16, max: 16 })
+  //   .withMessage("Card Number Must contain only 16 digit")
+  //   .custom((value, { req }) => {
+  //     if (req.body.user_type == "player" && !value)
+  //       throw new Error("card_no is required");
+  //     if (req.body.user_type == "coach" && !value)
+  //       throw new Error("card_no is required");
+  //     if (req.body.user_type == "user" && !value)
+  //       throw new Error("card_no is required");
+  //     return true;
+  //   }),
+  // body("expiry_month")
+  //   .trim()
+  //   .isNumeric()
+  //   .withMessage("Expiry Month Must be only Numeric")
+  //   .isLength({ min: 2, max: 2 })
+  //   .withMessage("Expiry Month Must Contain Only 2 Digit")
+  //   .custom((value, { req }) => {
+  //     if (req.body.user_type == "player" && !value)
+  //       throw new Error("expiry_month is required");
+  //     if (req.body.user_type == "coach" && !value)
+  //       throw new Error("expiry_month is required");
+  //     if (req.body.user_type == "user" && !value)
+  //       throw new Error("expiry_year is required");
+  //     return true;
+  //   }),
+  // body("expiry_year")
+  //   .trim()
+  //   .isNumeric()
+  //   .withMessage("Expiry Year Must be only Numeric")
+  //   .isLength({ min: 4, max: 4 })
+  //   .withMessage("Expiry Year Must Contain 4 Digit")
+  //   .custom((value, { req }) => {
+  //     if (req.body.user_type == "player" && !value)
+  //       throw new Error("expiry_year is required");
+  //     if (req.body.user_type == "coach" && !value)
+  //       throw new Error("expiry_year is required");
+  //     if (req.body.user_type == "user" && !value)
+  //       throw new Error("expiry_year is required");
+  //     return true;
+  //   }),
   // Sanitize fields.
   body("user_type").escape(),
   body("username").escape(),
@@ -385,12 +400,6 @@ exports.register = [
             achievements: user.achievements,
             career: user.career,
             nationality: user.nationality,
-            latitude: user.latitude,
-            longitude: user.longitude,
-            cvc_no: user.cvc_no,
-            card_no: user.card_no,
-            expiry_month: user.expiry_month,
-            expiry_year: user.expiry_year,
           };
           const secretKey = process.env.JWT_SECRET || "";
           userData.token = jwt.sign({ id: user.id.toString() }, secretKey, {
@@ -418,8 +427,6 @@ exports.register = [
             favorite_serve: user.favorite_serve,
             height: user.height,
             location: user.location,
-            latitude: user.latitude,
-            longitude: user.longitude,
             nationality: user.nationality,
             team: user.team,
             club: user.club,
@@ -427,8 +434,12 @@ exports.register = [
             achievements: user.achievements,
             career: user.career,
             zip_code: user.zip_code,
-            expiry_month: user.expiry_month,
-            expiry_year: user.expiry_year,
+            // latitude: user.latitude,
+            // longitude: user.longitude,
+            // cvc_no: user.cvc_no,
+            // card_no: user.card_no,
+            // expiry_month: user.expiry_month,
+            // expiry_year: user.expiry_year,
           };
 
           const secretKey = process.env.JWT_SECRET || "";
@@ -453,13 +464,13 @@ exports.register = [
             street_address2: user.street_address2,
             zip_code: user.zip_code,
             location: user.location,
-            latitude: user.latitude,
-            longitude: user.longitude,
             nationality: user.nationality,
-            cvc_no: user.cvc_no,
-            card_no: user.card_no,
-            expiry_month: user.expiry_month,
-            expiry_year: user.expiry_year,
+            // latitude: user.latitude,
+            // longitude: user.longitude,
+            // cvc_no: user.cvc_no,
+            // card_no: user.card_no,
+            // expiry_month: user.expiry_month,
+            // expiry_year: user.expiry_year,
           };
           const secretKey = process.env.JWT_SECRET || "";
           userInfo.token = jwt.sign({ id: user.id.toString() }, secretKey, {
@@ -688,12 +699,16 @@ exports.verifyOtp = [
 exports.resetPassword = [
   body("email")
     .trim()
+    .notEmpty()
+    .withMessage("email Should not be Empty")
     .isLength({ min: 1 })
     .withMessage("Email must be specified.")
     .isEmail()
     .withMessage("Email must be a valid email address."),
   body("password")
     .trim()
+    .notEmpty()
+    .withMessage("Password Should not be Empty")
     .isStrongPassword({
       minLength: 8,
       minLowercase: 1,
