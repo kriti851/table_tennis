@@ -7,12 +7,13 @@ const bcrypt = require("bcrypt");
 const auth = require("../../middlewares/jwt");
 require("dotenv").config();
 
+// List of User/Coach/Player
 exports.list = [
     auth,
     async (req, res) => {
     try {
     var  limit = 5;
-    var offest =0;
+    var  offest =0;
     if(typeof req.query.page !='undefined' && req.query.page>1){
         offest=((req.query.page-1)*limit);
     }
@@ -62,6 +63,7 @@ exports.list = [
     }
 }];
 
+//Data of Particluar Id
 exports.list_data = [
     auth,
     async (req, res) => {
@@ -97,10 +99,14 @@ exports.list_data = [
         }
     }];
 
+//Update Details    
 exports.update_user = [
     auth,
     // profileUpload.single('image'),
-    body("id").isLength({ min: 1 }).trim().withMessage("id is required"),
+    body("id")
+      .isLength({ min: 1 })
+      .trim()
+      .withMessage("id is required"),
     async (req, res) => {
     var body = req.body;
     var errors = validationResult(req);
@@ -124,16 +130,14 @@ exports.update_user = [
         'location': body.location,
         'street_address1': body.street_address1,
         'street_address2': body.street_address2,
-        'latitude': body.latitude,
-        "longitude": body.longitude,
         "team": body.team,
         "club": body.club,
         "awards": body.awards,
         "zip_code": body.zip_code,
-        "cvc_no": body.cvc_no,
-        "card_no": body.card_no,
-        "expiry_month": body.expiry_month,
-        "expiry_year": body.expiry_year
+        // "cvc_no": body.cvc_no,
+        // "card_no": body.card_no,
+        // "expiry_month": body.expiry_month,
+        // "expiry_year": body.expiry_year
         }
         try {  
             await UserModel.update(set_data,{ where: { id: req.body.id } });
@@ -141,10 +145,9 @@ exports.update_user = [
                 where:{id:req.body.id}
             });
         if (!user) {
-            return apiResponse.ErrorResponse(res, "No information  found by this user", user);
+            return apiResponse.ErrorResponse(res, "No information found by this user", user);
             }          
-            return apiResponse.successResponseWithData(res, "information updated sucessfully", user);
-
+            return apiResponse.successResponseWithData(res, "Information updated successfully", user);
         } catch (err) {
             console.log(err)
             return apiResponse.ErrorResponse(res, err);

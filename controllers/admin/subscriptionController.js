@@ -5,6 +5,7 @@ const auth = require("../../middlewares/jwt");
 const { Op } = require("sequelize");
 require("dotenv").config();
 
+//Add Subscription Plans By admin
 exports.subscription = [
     auth,
     check('title')
@@ -61,6 +62,7 @@ exports.subscription_id = [
     }
   }]
 
+//Subscription List of All Plans
 exports.subscription_list = [
     auth,
     async (req, res) => {
@@ -76,6 +78,7 @@ exports.subscription_list = [
     }
  }]
  
+ //Update Subscription Plans by Admin
  exports.subscription_data = [
       auth,
       body("id")
@@ -106,6 +109,7 @@ exports.subscription_list = [
       }
     }];
 
+//Delete Subscription Plans By Admin
 exports.delete = [
     auth,
     body("id")

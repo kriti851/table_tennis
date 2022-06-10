@@ -8,42 +8,42 @@ require("dotenv").config();
 exports.manage_training = [
     auth,
     body("racket")
-     .isLength({ min: 1 })
-     .trim().withMessage("racket is required"),
+     .trim(),
+    //  .isLength({ min: 1 }),
+    //  .withMessage("racket is required"),
     body("ball")
-     .isLength({ min: 1 })
-     .trim()
-     .withMessage("ball is required"),
+     .trim(),
+    //  .isLength({ min: 1 }),
+    //  .withMessage("ball is required"),
     body("person_position")
-     .isLength({ min: 1 })
-     .trim()
-     .withMessage("Person position is required"),
+     .trim(),
+    //  .isLength({ min: 1 })
+    //  .withMessage("Person position is required"),
     body("foot_position")
-     .isLength({ min: 1 })
-     .trim()
-     .withMessage("Foot position is required"),
+     .trim(),
+    //  .isLength({ min: 1 })
+    //  .withMessage("Foot position is required"),
     body("head_position")
-     .isLength({ min: 1 })
-     .trim()
-     .withMessage("Head position is required"),
+     .trim(),
+    //  .isLength({ min: 1 })
+    //  .withMessage("Head position is required"),
     body("hand_position")
-     .isLength({ min: 1 })
-     .trim()
-     .withMessage("Hand position is required"),
+     .trim(),
+    //  .isLength({ min: 1 })     
+    //  .withMessage("Hand position is required"),
     body("arm_position")
-     .isLength({ min: 1 })
-     .trim()
-     .withMessage("Arm Position is required"),
+     .trim(),
+    //  .isLength({ min: 1 })    
+    //  .withMessage("Arm Position is required"),
     body("wrist_movements")
-     .isLength({ min: 1 })
-     .trim()
-     .withMessage("wrist movement is required"),
+     .trim(),
+    //  .isLength({ min: 1 })    
+    //  .withMessage("wrist movement is required"),
   async (req, res) => {
     var errors = validationResult(req);
     if (errors.isEmpty()) {
       try {
         const player_info = {
-          user_id: req.user.id,
           racket: req.body.racket,
           ball: req.body.ball,
           person_position: req.body.person_position,
@@ -75,19 +75,24 @@ exports.manage_training = [
     }
   },
 ];
+//Player Traning List
 exports.trainig_list = [
   auth,
   async (req, res) => {
     console.log(req);
     try {
-      let training_Data = await manage_trainingModel.findAll({});
-      if (!training_Data.length > 0) {
+    let training_Data = await manage_trainingModel.findAll({
+        order: [ 
+          [ 'id', 'desc' ] 
+         ],  
+      });    
+    if (!training_Data.length > 0) {
         return apiResponse.successResponseWithData(
           res,
           "No information found by this user"
         );
       }
-      return apiResponse.successResponseWithData(
+        return apiResponse.successResponseWithData(
         res,
         "List of training",
         training_Data
@@ -98,11 +103,15 @@ exports.trainig_list = [
   },
 ];
 
+//Update Player Traning Data
 exports.update = [
   auth,
-  body("id").isLength({ min: 1 }).trim().withMessage("id is required"),
+  body("id")
+    .trim()
+    .isLength({ min: 1 })  
+    .withMessage("id is required"),
   async (req, res) => {
-    var errors = validationResult(req);
+  var errors = validationResult(req);
     if (!errors.isEmpty()) {
       return apiResponse.validationErrorWithData(
         res,
@@ -130,13 +139,13 @@ exports.update = [
       if (!user) {
         return apiResponse.ErrorResponse(
           res,
-          "No information  found by this user",
+          "No information Found by this user",
           user
         );
       }
       return apiResponse.successResponseWithData(
         res,
-        "information updated sucessfully",
+        "Information updated sucessfully",
         user
       );
     } catch (err) {
@@ -145,20 +154,25 @@ exports.update = [
     }
   },
 ];
+
+//Delete Player Manage Traning Detail
 exports.delete = [
-  auth,
-  body("id").isLength({ min: 1 }).trim().withMessage("id is required"),
-  async (req, res) => {
-    try {
-      const taining_data = await manage_trainingModel.destroy({
+   auth,
+   body("id")
+     .trim()
+     .isLength({ min: 1 })
+     .withMessage("id is required"),
+   async (req, res) => {
+   try {
+        const taining_data = await manage_trainingModel.destroy({
         where: { id: req.body.id },
       });
-      if (!taining_data) {
+    if (!taining_data) {
         return apiResponse.successResponseWithData(res, "No information exist");
       }
       return apiResponse.successResponseWithData(
         res,
-        "Training information  deleted sucessfully"
+        "Training information deleted sucessfully"
       );
     } catch (err) {
       return apiResponse.ErrorResponse(res, err);

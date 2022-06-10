@@ -25,15 +25,17 @@ const videoUpload = multer({
   storage: videoStorage,
 });
 
+//Video Uploaded by Player with Content
 exports.player_video = [
     auth,
     videoUpload.single("video"),
     body("title")
-      .isLength({ min: 1 })
-      .trim().withMessage("title  is required"),
-    body("content")
-      .isLength({ min: 1 })
       .trim()
+      .isLength({ min: 1 })
+      .withMessage("title  is required"),
+    body("content")
+      .trim()
+      .isLength({ min: 1 })
       .withMessage("content  is required"),
     async (req, res) => {
     try {
@@ -55,7 +57,6 @@ exports.player_video = [
         user_type: req.body.user_type,
         };
         const data = await practisingvideoModel.create(info);
-        //console.log(data, "sdfffffff");
         data.video = process.env.VIDEOURL + "public/uploads/" + data.video;
         return apiResponse.successResponseWithData(
           res,
@@ -75,6 +76,7 @@ exports.player_video = [
   },
 ];
 
+//Players List
 exports.plyer_wholelist = [
     auth,
     async (req, res) => {
@@ -113,6 +115,7 @@ exports.plyer_wholelist = [
   },
 ];
 
+//Particular player detail list
 exports.plyerlist = [
     auth,
     async (req, res) => {
@@ -152,11 +155,13 @@ exports.plyerlist = [
   },
 ];
 
+//Update Detail by player of content and title
 exports.update = [
     auth,
     body("id")
+      .trim()
       .isLength({ min: 1 })
-      .trim().withMessage("id is required"),
+      .withMessage("id is required"),
     async (req, res) => {
     var body = req.body;
     var errors = validationResult(req);
@@ -198,9 +203,13 @@ exports.update = [
   },
 ];
 
+//Delete Data by player of uploaded content and video
 exports.delete = [
     auth,
-    body("id").isLength({ min: 1 }).trim().withMessage("id is required"),
+    body("id")
+      .trim()
+      .isLength({ min: 1 }) 
+      .withMessage("id is required"),
     async (req, res) => {
     try {
         const practise_video = await practisingvideoModel.destroy({

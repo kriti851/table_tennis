@@ -7,6 +7,7 @@ const auth = require("../../middlewares/jwt");
 require("dotenv").config();
 var filemidlleware = fileUpload();
 
+//Add Manage Details Traning Of Player
 exports.manage_training = [
    auth,
    filemidlleware,
@@ -57,7 +58,7 @@ exports.manage_training = [
     }
   },
 ];
-
+//Player Traning List
 exports.training_list = [
    auth,
    async (req, res) => {
@@ -102,7 +103,7 @@ exports.training_list = [
     }
   },
 ];
-
+//Update Player Traning Data
 exports.training_update = [
    auth,
    filemidlleware,

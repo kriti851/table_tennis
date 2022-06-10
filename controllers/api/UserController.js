@@ -146,17 +146,17 @@ exports.changePassword = [
     auth,
     body("old_password")
         .trim()
-        .isLength({ min: 6 }) 
-        .withMessage("New  password must be 6 characters or greater."),
+        .isLength({ min:8 ,max:10 }) 
+        .withMessage("New  password must be 8 characters or greater."),
     body("password")
         .trim()
-        .isLength({ min: 6 })
-        .withMessage("Password must be 6 characters or greater."),
+        .isLength({ min:8 ,max:10 })
+        .withMessage("Password must be 8 characters or greater."),
     body("confirm_password")
         .trim()
         .custom((value, { req }) => {
         if (value !== req.body.password) {
-        throw new Error("Password confirmation does not match password");
+        throw new Error("New Password and Confirm Password Doesn't Match");
         }
     return true;
   }),

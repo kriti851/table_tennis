@@ -49,4 +49,4 @@ const manage_training = sequelize.define('manage_trainings', {
  
  });    
     
-  module.exports =manage_training;    
+  module.exports = manage_training;    
