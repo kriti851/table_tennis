@@ -65,7 +65,6 @@ exports.add = [
             }
             if (!req.file) {
                 let info = {
-                  
                     created_by: req.user.id,
                     team_name: req.body.team_name,
                     location: req.body.location,
@@ -77,7 +76,6 @@ exports.add = [
                 return apiResponse.successResponseWithData(res, "Team created by coach Sucessfully", info);
             } else {
                 let info = {
-          
                     created_by: req.user.id,
                     team_name: req.body.team_name,
                     location: req.body.location,
@@ -86,8 +84,6 @@ exports.add = [
                 }
                 const team = await teamModel.create(info)
                 console.log(team,"daffffffffffffff")
-
-
                 info.image = team.image ? process.env.IMAGEURL + 'public/uploads/' + team.image:process.env.IMAGEURL + 'public/uploads/default.png';
                 return apiResponse.successResponseWithData(res, "Team created by coach Sucessfully", info);
             }
@@ -101,7 +97,6 @@ exports.add = [
             return apiResponse.ErrorResponse(res, errorInfo);
         }
     }];
-
         exports.playerlist = [
             auth,
             async (req, res) => {
@@ -132,10 +127,6 @@ exports.add = [
               }
             }
           ];
-
-
-
-
           exports.list = [
             auth,
             async (req, res) => {

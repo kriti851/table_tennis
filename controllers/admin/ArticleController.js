@@ -103,13 +103,25 @@ exports.list = [
         limit = parseInt(10);
         offset = limit * (1 - 1);
     }
+    var search={};
+
+            var q= req.body.q;
+            q=q.replace(/'/g,"");
+           search[Op.or]={
+               title : {[Op.substring]: q.trim()},
+               content : {[Op.substring]: q.trim()},
+           }
       const {count,rows:user} = await ArticleModel.findAndCountAll({
-        offset,limit,
+        offset,limit,   ...search,
           attributes: ['id', 'title', 'content', 'createdat', 'updatedat',
           [sequelize.literal("CONCAT('" + process.env.IMAGEURL + 'public/uploads/' + "',image)"), 'image']
           ],
 
         });
+     
+ 
+       
+  
 
 
         let next_page=false
