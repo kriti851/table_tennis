@@ -41,47 +41,34 @@ exports.add = [
       return apiResponse.validationErrorWithData(res, "Validation Error.", errors.array());
     }
       const { filename:video} = req.file;
-    let info = {
-      user_id:req.user.id,
-      title: req.body.title,
-      content: req.body.content,
-      video:req.file.filename
-      }     
+      let info = {
+        user_id:req.user.id,
+        title: req.body.title,
+        content: req.body.content,
+        video:req.file.filename
+      }
+
       const data = await practisingvideoModel.create(info,user_type = "player")
       data.video = process.env.VIDEOURL + 'public/uploads/' + data.video;
       return apiResponse.successResponseWithData(res, "practising video upload Sucessfully",data);
+
     }
     catch (err) {
       console.log(err);
       const errorInfo = {
-      title: req.body,
-      file: req.file
+        title: req.body,
+        file: req.file
       }
       return apiResponse.ErrorResponse(res, errorInfo);
     }
   }];
 
-exports.list = [
-    auth,
-    async (req, res) => {
-    try {
-      const data = {
-        image: req.query.image,
-      }
-        console.log(data.image)
-  let getArticle = await ArticleModel.findAll({
-      attributes: ['id', 'title', 'content', 'createdat', 'updatedat',
-  [sequelize.literal("CONCAT('" + process.env.IMAGEURL + 'uploads/' + "',image)"), 'image']
-    ],
-  });
-    if (!getArticle.length > 0) {
-        return apiResponse.successResponseWithData(res, "No Article uploaded by this id");
-   }
-        return apiResponse.successResponseWithData(res, "List of article", getArticle);
-   } catch (err) {
-       return apiResponse.ErrorResponse(res, err);
-    }
-  }]
+
+
+
+
+
+
 
 
 

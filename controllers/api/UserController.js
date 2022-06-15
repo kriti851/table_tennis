@@ -144,15 +144,30 @@ exports.update = [
 //Change Password
 exports.changePassword = [
     auth,
+
     body("old_password")
-        .trim()
-        .isLength({ min: 6 }) 
-        .withMessage("New  password must be 6 characters or greater."),
+    .trim()
+    .notEmpty()
+    .withMessage("Password Should not be Empty")
+    .isStrongPassword({
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+    }),
+
+
     body("password")
-        .trim()
-        .isLength({ min: 6 })
-        .withMessage("Password must be 6 characters or greater."),
-    body("confirm_password")
+    .trim()
+    .notEmpty()
+    .withMessage("Password Should not be Empty")
+    .isStrongPassword({
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+    }),
+    body("confirmpassword")
         .trim()
         .custom((value, { req }) => {
         if (value !== req.body.password) {

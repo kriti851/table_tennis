@@ -37,6 +37,12 @@ const user = sequelize.define('users', {
             msg: 'Email address already in use!'
         }
     },
+
+    mobileNumber:{
+        type: Sequelize.STRING,
+        allowNull: true
+
+    },
     password: {
         type: Sequelize.STRING,
         allowNull: true
