@@ -1,4 +1,4 @@
-const ArticleModel = require("../../models/article");
+const ArticleModel = require("../../models/app_article");
 const apiResponse = require("../../helpers/apiResponse");
 const { Op } = require("sequelize");
 
@@ -62,6 +62,7 @@ exports.add = [
         }
 
         const articlefile = await ArticleModel.create(info)
+        console.log(articlefile,"sfdddddddddd")
 
         info.image = articlefile.image ? process.env.IMAGEURL + 'public/uploads/' + articlefile.image : process.env.IMAGEURL + 'public/uploads/default.png';
         return apiResponse.successResponseWithData(res, "Article Added  Sucessfully", info);
@@ -83,6 +84,7 @@ exports.add = [
       }
     }
     catch (err) {
+        console.log(err,"dsfffffffffffff")
       const errorInfo = {
         title: req.body,
         file: req.file
@@ -156,6 +158,9 @@ exports.update = [
   auth,
   fileUpload.single('image'),
   body("id").isLength({ min: 1 }).trim().withMessage("id is required"),
+  body("title").isLength({ min: 1 }).trim().withMessage("title  is required"),
+  body("content").isLength({ min: 1 }).trim().withMessage("content  is required"),
+
   async (req, res) => {
     var body = req.body;
     var errors = validationResult(req);

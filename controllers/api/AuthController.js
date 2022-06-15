@@ -1,6 +1,5 @@
 const UserModel = require("../../models/user");
 const { body, validationResult, check } = require("express-validator");
-
 const multer = require("multer");
 var path = require("path");
 const fs = require("fs-extra");
@@ -382,7 +381,6 @@ exports.register = [
             username: user.username,
             user_type: user.user_type,
             phone: user.phone,
-            mobileNumber:user.mobileNumber,
             email: user.email,
             street_address1: user.street_address1,
             street_address2: user.street_address2,
@@ -417,7 +415,7 @@ exports.register = [
             username: user.username,
             user_type: user.user_type,
             phone: user.phone,
-            mobileNumber:user.mobileNumber,
+         
             email: user.email,
             dob: user.dob,
             gender: user.gender,
@@ -459,7 +457,6 @@ exports.register = [
             username: user.username,
             user_type: user.user_type,
             phone: user.phone,
-            mobileNumber:user.mobileNumber,
             email: user.email,
             dob: user.dob,
             gender: user.gender,

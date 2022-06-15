@@ -1,11 +1,5 @@
 const admin = require("../../models/table_tenis_super_admin.js");
-const UserModel = require("../../models/user");
 const { body, validationResult } = require("express-validator");
-const multer = require('multer');
-var path = require('path');
-const fs = require('fs-extra');
-const { v4: uuidv4 } = require('uuid');
-
 const apiResponse = require("../../helpers/apiResponse");
 const auth = require("../../middlewares/jwt");
 const utility = require("../../helpers/utility");
@@ -180,71 +174,7 @@ exports.resetPassword = [
         return apiResponse.ErrorResponse(res, err);
     }
 }];
-const videoStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        let path = `./public/uploads/`;
-        fs.mkdirsSync(path);
-        cb(null, path);
-    },
-    filename: function (req, file, cb) {
-        cb(null, '' + uuidv4() + '-' + Date.now() + path.extname(file.originalname));
-      
-    },
 
-
-
-});
-function fileFilter(req, file, cb){
-    const extension = file.mimetype.split('/')[0];
-    if(extension !== 'video'){
-        console.log(extension,"dssssssssssss")
-    // return cb(new Error('Something went wrong'), false);
-    return cb(console.log('Something went wrong'), false);
-    }
-    cb(null, true);
-};
-
-const videoUpload = multer({
-    storage: videoStorage,
-    limits: {
-    fileSize: 10000000 // 10000000 Bytes = 10 MB
-    },
-    fileFilter:fileFilter,
-
-
-})
-
-
-exports.upload = [
-auth,
-
-videoUpload.single('video'),
-async (req, res) => {
-
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return apiResponse.validationErrorWithData(res, "Validation Error.", errors.array());
-        }
-        // const { filename: video } = req.file;
-        if(req.file){
-            let infoVideo = {
-                video: req.file.filename,
-            }
-   
-            const uploadVideo = await UserModel.create(infoVideo)
-            infoVideo.video = process.env.VIDEOURL + 'public/uploads/' + uploadVideo.video;
-            return apiResponse.successResponseWithData(res, "Article  video upload Sucessfully", infoVideo);
-        } else {
-            return apiResponse.ErrorResponse(res,"please upload the video");
-        }
-    }
-    catch (err) {
-        console.log(err)
-        return apiResponse.ErrorResponse(res, err);
-
-    }
-}];
 
 
 

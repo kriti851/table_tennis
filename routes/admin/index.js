@@ -3,7 +3,9 @@ var authRouter = require("./auth");
 var articlerouter = require("./article");
 var userRouter = require("./user");
 var  practisingrouter = require("./practising");
+var  practisingrouter = require("./video");
 var  subscriptionrouter = require("./subscription");
+var  videorouter = require("./video");
 var apiResponse = require("../../helpers/apiResponse");
 var app = express();
 
@@ -16,6 +18,7 @@ app.use("/user/", userRouter);
 app.use("/article/", articlerouter);
 app.use("/practising/", practisingrouter);
 app.use("/subscription/", subscriptionrouter);
+app.use("/adminvideo/", videorouter);
 
 // throw 404 if URL not found
 app.all("*", function(req, res) {

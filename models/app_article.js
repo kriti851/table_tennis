@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');    
 const sequelize = require('../config/db');    
     
-const article = sequelize.define('articles', {  
+const app_article = sequelize.define('app_articles', {  
 id:{
 type:Sequelize.NUMBER,    
 allowNull:false,    
@@ -21,10 +21,10 @@ autoIncrement: true
         type: Sequelize.STRING,
         allowNull: true,      
     },
-   
+     
 },{ 
     timestamps: true,
  
  });    
     
-  module.exports = article;    
+  module.exports = app_article;    

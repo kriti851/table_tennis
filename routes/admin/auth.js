@@ -7,6 +7,5 @@ router.post("/forgot-password", AuthController.forgotPassword);
 router.post("/verify-otp", AuthController.verifyOtp);
 router.post("/reset-password", AuthController.resetPassword);
 // router.post("/list", AuthController.role_list);
-router.post("/upload_video", AuthController.upload);
 
 module.exports = router;
