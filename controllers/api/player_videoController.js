@@ -27,20 +27,17 @@ const videoUpload = multer({
 
 //Video Uploaded by Player with Content
 exports.player_video = [
-    auth,
-    videoUpload.single("video"),
-    body("title")
-      .trim()
-      .isLength({ min: 1 })
-      .withMessage("title  is required"),
-    body("content")
-      .trim()
-      .isLength({ min: 1 })
-      .withMessage("content  is required"),
-    async (req, res) => {
+  auth,
+  videoUpload.single("video"),
+  body("title").trim().isLength({ min: 1 }).withMessage("title  is required"),
+  body("content")
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage("content  is required"),
+  async (req, res) => {
     try {
       const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+      if (!errors.isEmpty()) {
         return apiResponse.validationErrorWithData(
           res,
           "Validation Error.",
@@ -48,13 +45,13 @@ exports.player_video = [
         );
       }
       const { filename: video } = req.file;
-    if("player" == req.body.user_type) {
+      if ("player" == req.body.user_type) {
         let info = {
-        user_id: req.user.id,
-        title: req.body.title,
-        content: req.body.content,
-        video: req.file.filename,
-        user_type: req.body.user_type,
+          user_id: req.user.id,
+          title: req.body.title,
+          content: req.body.content,
+          video: req.file.filename,
+          user_type: req.body.user_type,
         };
         const data = await practisingvideoModel.create(info);
         data.video = process.env.VIDEOURL + "public/uploads/" + data.video;
@@ -63,7 +60,7 @@ exports.player_video = [
           "practising video upload Sucessfully by Player",
           data
         );
-    }else {
+      } else {
         return apiResponse.ErrorResponse(res, "you are not player");
       }
     } catch (err) {
@@ -78,33 +75,33 @@ exports.player_video = [
 
 //Players List
 exports.plyer_wholelist = [
-    auth,
-    async (req, res) => {
+  auth,
+  async (req, res) => {
     try {
       let getvideo = await practisingvideoModel.findAll({
-      attributes: [
-      "id",
-      "user_id",
-      "title",
-      "content",
-      "user_type",
-      "createdat",
-      "updatedat",
-    [
-    sequelize.literal(
-      "CONCAT('" + process.env.IMAGEURL + "public/uploads/" + "',video)"
-    ),
-      "video",
-         ],
+        attributes: [
+          "id",
+          "user_id",
+          "title",
+          "content",
+          "user_type",
+          "createdat",
+          "updatedat",
+          [
+            sequelize.literal(
+              "CONCAT('" + process.env.IMAGEURL + "public/uploads/" + "',video)"
+            ),
+            "video",
+          ],
         ],
       });
-    if (!getvideo.length > 0) {
+      if (!getvideo.length > 0) {
         return apiResponse.successResponseWithData(
           res,
           "No Article uploaded by this id"
         );
       }
-        return apiResponse.successResponseWithData(
+      return apiResponse.successResponseWithData(
         res,
         "List of article",
         getvideo
@@ -117,81 +114,78 @@ exports.plyer_wholelist = [
 
 //Particular player detail list
 exports.plyerlist = [
-    auth,
-    async (req, res) => {
+  auth,
+  async (req, res) => {
     try {
       let getvideo = await practisingvideoModel.findAll({
-      attributes: [
-      "id",
-      "user_id",
-      "title",
-      "content",
-      "user_type",
-      "createdat",
-      "updatedat",
-    [
-    sequelize.literal(
-      "CONCAT('" + process.env.IMAGEURL + "public/uploads/" + "',video)"
-    ),
-      "video",
+        attributes: [
+          "id",
+          "user_id",
+          "title",
+          "content",
+          "user_type",
+          "createdat",
+          "updatedat",
+          [
+            sequelize.literal(
+              "CONCAT('" + process.env.IMAGEURL + "public/uploads/" + "',video)"
+            ),
+            "video",
           ],
         ],
-    where: { user_id: req.user.id },
-    });
-    if (!getvideo.length > 0) {
+        where: { user_id: req.user.id },
+      });
+      if (!getvideo.length > 0) {
         return apiResponse.successResponseWithData(
-        res,
-        "No Article uploaded by this id"
+          res,
+          "No Article uploaded by this id"
         );
       }
-        return apiResponse.successResponseWithData(
+      return apiResponse.successResponseWithData(
         res,
         "List of article",
         getvideo
       );
     } catch (err) {
-        return apiResponse.ErrorResponse(res, err);
+      return apiResponse.ErrorResponse(res, err);
     }
   },
 ];
 
 //Update Detail by player of content and title
 exports.update = [
-    auth,
-    body("id")
-      .trim()
-      .isLength({ min: 1 })
-      .withMessage("id is required"),
-    async (req, res) => {
+  auth,
+  body("id").trim().isLength({ min: 1 }).withMessage("id is required"),
+  async (req, res) => {
     var body = req.body;
     var errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return apiResponse.validationErrorWithData(
+      return apiResponse.validationErrorWithData(
         res,
         "Validation Error.",
         errors.array()
       );
     }
     var setdata = {
-        title: body.title,
-        content: body.content,
+      title: body.title,
+      content: body.content,
     };
     try {
-        await practisingvideoModel.update(setdata, {
+      await practisingvideoModel.update(setdata, {
         where: { id: req.body.id },
-    });
-    var user = await practisingvideoModel.findOne({
+      });
+      var user = await practisingvideoModel.findOne({
         attributes: { exclude: ["video", "user_type", "user_id"] },
         where: { id: req.body.id },
-    });
-    if (!user) {
+      });
+      if (!user) {
         return apiResponse.ErrorResponse(
-        res,
-        "No information  found by this user",
-        user
-    );
-}
-        return apiResponse.successResponseWithData(
+          res,
+          "No information  found by this user",
+          user
+        );
+      }
+      return apiResponse.successResponseWithData(
         res,
         "information updated sucessfully",
         user
@@ -205,30 +199,27 @@ exports.update = [
 
 //Delete Data by player of uploaded content and video
 exports.delete = [
-    auth,
-    body("id")
-      .trim()
-      .isLength({ min: 1 }) 
-      .withMessage("id is required"),
-    async (req, res) => {
+  auth,
+  body("id").trim().isLength({ min: 1 }).withMessage("id is required"),
+  async (req, res) => {
     try {
-        const practise_video = await practisingvideoModel.destroy({
+      const practise_video = await practisingvideoModel.destroy({
         where: { id: req.body.id },
-    });
-    if (!practise_video) {
+      });
+      if (!practise_video) {
         return apiResponse.successResponseWithData(
-        res,
-        "No information  found",
+          res,
+          "No information  found",
           practise_video
         );
       }
-        return apiResponse.successResponseWithData(
+      return apiResponse.successResponseWithData(
         res,
         "Practising video information  deleted sucessfully",
         practise_video
       );
     } catch (err) {
-        return apiResponse.ErrorResponse(res, err);
+      return apiResponse.ErrorResponse(res, err);
     }
   },
 ];

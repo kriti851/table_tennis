@@ -42,10 +42,7 @@ exports.register = [
     .notEmpty()
     .isLength({ min: 1 })
     .withMessage("Gender is required."),
-  body("dob")
-    .trim()
-    .isLength({ min: 1 })
-    .withMessage("DOB is required."),
+  body("dob").trim().isLength({ min: 1 }).withMessage("DOB is required."),
   body("email")
     .trim()
     .notEmpty()
@@ -56,7 +53,7 @@ exports.register = [
     .withMessage("Email must be a valid email address.")
     .custom(async (value) => {
       const user = await UserModel.findOne({ where: { email: value } });
-      if(user) {
+      if (user) {
         return Promise.reject("E-mail already in use");
       }
     }),
@@ -72,7 +69,7 @@ exports.register = [
     })
     .withMessage("password must be strong."),
   body("confirmpassword").custom((value, { req }) => {
-    if(value !== req.body.password) {
+    if (value !== req.body.password) {
       throw new Error("Password confirmation does not match with password");
     }
     return true;
@@ -90,24 +87,22 @@ exports.register = [
         throw new Error("Nationality is required");
       return true;
     }),
-  body("achievements")
-    .trim(),
-    // .custom((value, { req }) => {
-    //   if (req.body.user_type == "player" && !value)
-    //     throw new Error("achievements is required");
-    //   if (req.body.user_type == "coach" && !value)
-    //     throw new Error("achievements is required");
-    //   return true;
-    // }),
-  body("career")
-    .trim(),
-    // .custom((value, { req }) => {
-    //   if (req.body.user_type == "player" && !value)
-    //     throw new Error("career is required");
-    //   if (req.body.user_type == "coach" && !value)
-    //     throw new Error("career is required");
-    //   return true;
-    // }),
+  body("achievements").trim(),
+  // .custom((value, { req }) => {
+  //   if (req.body.user_type == "player" && !value)
+  //     throw new Error("achievements is required");
+  //   if (req.body.user_type == "coach" && !value)
+  //     throw new Error("achievements is required");
+  //   return true;
+  // }),
+  body("career").trim(),
+  // .custom((value, { req }) => {
+  //   if (req.body.user_type == "player" && !value)
+  //     throw new Error("career is required");
+  //   if (req.body.user_type == "coach" && !value)
+  //     throw new Error("career is required");
+  //   return true;
+  // }),
   body("phone")
     .trim()
     .isNumeric()
@@ -171,24 +166,24 @@ exports.register = [
     .trim()
     .isAlpha("en-US", { ignore: " " })
     .withMessage("Team Must be only alphabetical chars"),
-    // .custom((value, { req }) => {
-    //   if (req.body.user_type == "player" && !value)
-    //     throw new Error("team is required");
-    //   if (req.body.user_type == "coach" && !value)
-    //     throw new Error("team is required");
-    //   return true;
-    // }),
+  // .custom((value, { req }) => {
+  //   if (req.body.user_type == "player" && !value)
+  //     throw new Error("team is required");
+  //   if (req.body.user_type == "coach" && !value)
+  //     throw new Error("team is required");
+  //   return true;
+  // }),
   body("club")
     .trim()
     .isAlphanumeric("en-US", { ignore: " " })
     .withMessage("Club Must be only alphanumeric"),
-    // .custom((value, { req }) => {
-    //   if (req.body.user_type == "player" && !value)
-    //     throw new Error("club is required");
-    //   if (req.body.user_type == "coach" && !value)
-    //     throw new Error("club is required");
-    //   return true;
-    // }),
+  // .custom((value, { req }) => {
+  //   if (req.body.user_type == "player" && !value)
+  //     throw new Error("club is required");
+  //   if (req.body.user_type == "coach" && !value)
+  //     throw new Error("club is required");
+  //   return true;
+  // }),
   body("favorite_serve")
     .trim()
     .isAlpha("en-US", { ignore: " " })
@@ -204,13 +199,13 @@ exports.register = [
     .trim()
     .isAlpha("en-US", { ignore: " " })
     .withMessage("Award Must be only Char"),
-    // .custom((value, { req }) => {
-    //   if (req.body.user_type == "player" && !value)
-    //     throw new Error("Award is required");
-    //   if (req.body.user_type == "coach" && !value)
-    //     throw new Error("Award  is required");
-    //   return true;
-    // }),
+  // .custom((value, { req }) => {
+  //   if (req.body.user_type == "player" && !value)
+  //     throw new Error("Award is required");
+  //   if (req.body.user_type == "coach" && !value)
+  //     throw new Error("Award  is required");
+  //   return true;
+  // }),
   body("street_address1")
     .trim()
     .custom((value, { req }) => {
@@ -254,17 +249,16 @@ exports.register = [
   //   throw new Error("user is required");
   // return true;
   // }),
-    body("street_address2")
-      .trim(),
-    //   .custom((value, { req }) => {
-    //   if (req.body.user_type == "player" && !value)
-    //     throw new Error("street_address2 is required");
-    //   if (req.body.user_type == "coach" && !value)
-    //     throw new Error("street_address2 is required");
-    //   if (req.body.user_type == "coach" && !value)
-    //     throw new Error("street_address2 is required");
-    //   return true;
-    // }),
+  body("street_address2").trim(),
+  //   .custom((value, { req }) => {
+  //   if (req.body.user_type == "player" && !value)
+  //     throw new Error("street_address2 is required");
+  //   if (req.body.user_type == "coach" && !value)
+  //     throw new Error("street_address2 is required");
+  //   if (req.body.user_type == "coach" && !value)
+  //     throw new Error("street_address2 is required");
+  //   return true;
+  // }),
   body("zip_code")
     .trim()
     .isNumeric()
@@ -352,7 +346,7 @@ exports.register = [
   async (req, res) => {
     try {
       const errors = validationResult(req);
-        if (!errors.isEmpty()) {
+      if (!errors.isEmpty()) {
         return apiResponse.validationErrorWithData(
           res,
           errors.array({ onlyFirstError: false })[0].msg
@@ -546,7 +540,7 @@ exports.login = [
   async (req, res) => {
     try {
       const errors = validationResult(req);
-        if (!errors.isEmpty()) {
+      if (!errors.isEmpty()) {
         return apiResponse.validationErrorWithData(
           res,
           "Validation Error.",
@@ -607,9 +601,9 @@ exports.forgotPassword = [
   body("email").escape(),
   async (req, res) => {
     try {
-        const errors = validationResult(req);
+      const errors = validationResult(req);
       if (!errors.isEmpty()) {
-          return apiResponse.validationErrorWithData(
+        return apiResponse.validationErrorWithData(
           res,
           "Validation Error.",
           errors.array()
@@ -617,7 +611,7 @@ exports.forgotPassword = [
       } else {
         const { email } = req.body;
         const user = await UserModel.findOne({ where: { email: email } });
-      if (user) {
+        if (user) {
           // Generate otp
           let otp = utility.randomNumber(6);
           // Html email body
@@ -635,18 +629,18 @@ exports.forgotPassword = [
                 { otp: otp },
                 { where: { id: user.id } }
               );
-      if (!result) {
-              return apiResponse.unauthorizedResponse(
-              res,
-              "Something went wrong!"
-          );
-        }
+              if (!result) {
+                return apiResponse.unauthorizedResponse(
+                  res,
+                  "Something went wrong!"
+                );
+              }
               return apiResponse.successResponse(res, "OTP Sent Successfully");
-      });
-     } else {
-              return apiResponse.unauthorizedResponse(
-              res,
-              "Specified Email not found."
+            });
+        } else {
+          return apiResponse.unauthorizedResponse(
+            res,
+            "Specified Email not found."
           );
         }
       }
@@ -663,27 +657,24 @@ exports.verifyOtp = [
     .withMessage("Email must be specified.")
     .isEmail()
     .withMessage("Email must be a valid email address."),
-  body("otp")
-    .trim()
-    .isLength({ min: 1 })
-    .withMessage("OTP must be specified."),
+  body("otp").trim().isLength({ min: 1 }).withMessage("OTP must be specified."),
   async (req, res) => {
     try {
-        const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-          return apiResponse.validationErrorWithData(
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return apiResponse.validationErrorWithData(
           res,
           "Validation Error.",
           errors.array()
         );
-      }else {
-          const { email, otp } = req.body;
-          const user = await UserModel.findOne({
+      } else {
+        const { email, otp } = req.body;
+        const user = await UserModel.findOne({
           where: { otp: otp, email: email },
         });
-    if (user) {
+        if (user) {
           return apiResponse.successResponse(res, "OTP Verified Successfully.");
-      }else{
+        } else {
           return apiResponse.unauthorizedResponse(
             res,
             "Specified OTP not found."
@@ -717,51 +708,51 @@ exports.resetPassword = [
     })
     .withMessage("password must be strong."),
   body("confirm-password").custom((value, { req }) => {
-    if(value !== req.body.password) {
+    if (value !== req.body.password) {
       throw new Error("Confirm Password Doesn't match to your Password");
     }
-      return true;
+    return true;
   }),
   // body("email").escape(),
   body("password").escape(),
-    async (req, res) => {
+  async (req, res) => {
     try {
       const errors = validationResult(req);
-    if(!errors.isEmpty()) {
+      if (!errors.isEmpty()) {
         return apiResponse.validationErrorWithData(
           res,
           "Validation Error.",
           errors.array()
         );
-      }else {
+      } else {
         const { email, otp } = req.body;
         const user = await UserModel.findOne({ where: { email: email } });
-      if(user) {
+        if (user) {
           // if (user.otp == otp) {
-      if(req.body.password) {
-        const pass = await bcrypt.hash(req.body.password, 10);
-        const result = await UserModel.update(
-            { password: pass},
-            { where: { id: user.id } }
-          );
-      if (!result) {
-        return apiResponse.unauthorizedResponse(
-            res,
-            "Something went wrong!"
-         );
-      }
-        return apiResponse.successResponse(
-            res,
-            "Password Reset Successfully."
-        );
-      } else {
-        return apiResponse.unauthorizedResponse(
-            res,
-           "Something went wrong!"
+          if (req.body.password) {
+            const pass = await bcrypt.hash(req.body.password, 10);
+            const result = await UserModel.update(
+              { password: pass },
+              { where: { id: user.id } }
+            );
+            if (!result) {
+              return apiResponse.unauthorizedResponse(
+                res,
+                "Something went wrong!"
               );
             }
-        }else {
-        return apiResponse.unauthorizedResponse(
+            return apiResponse.successResponse(
+              res,
+              "Password Reset Successfully."
+            );
+          } else {
+            return apiResponse.unauthorizedResponse(
+              res,
+              "Something went wrong!"
+            );
+          }
+        } else {
+          return apiResponse.unauthorizedResponse(
             res,
             "Specified Email not found."
           );
