@@ -1,4 +1,5 @@
 const UserModel = require("../../models/user");
+const moment = require("moment");
 const { body, validationResult, check } = require("express-validator");
 
 const multer = require("multer");
@@ -371,6 +372,7 @@ exports.register = [
           return apiResponse.ErrorResponse(res, "Something went wrong");
         }
         if ("coach" == req.body.user_type) {
+          startdate =new Date();
           let userData = {
             name: user.name,
             username: user.username,
@@ -394,6 +396,8 @@ exports.register = [
             achievements: user.achievements,
             career: user.career,
             nationality: user.nationality,
+            startdate:user.startdate,
+            enddate: moment(startdate).add(21,'days').format('YYYY-MM-DD')
           };
           const secretKey = process.env.JWT_SECRET || "";
           userData.token = jwt.sign({ id: user.id.toString() }, secretKey, {
@@ -405,6 +409,7 @@ exports.register = [
             userData
           );
         } else if ("player" == req.body.user_type) {
+          startdate =new Date();
           let playerInfo = {
             name: user.name,
             username: user.username,
@@ -428,6 +433,8 @@ exports.register = [
             achievements: user.achievements,
             career: user.career,
             zip_code: user.zip_code,
+            startdate:user.startdate,
+            enddate: moment(startdate).add(21,'days').format('YYYY-MM-DD')
             // latitude: user.latitude,
             // longitude: user.longitude,
             // cvc_no: user.cvc_no,
@@ -446,6 +453,7 @@ exports.register = [
             playerInfo
           );
         } else {
+          startdate =new Date();
           let userInfo = {
             name: user.name,
             username: user.username,
@@ -459,6 +467,8 @@ exports.register = [
             zip_code: user.zip_code,
             location: user.location,
             nationality: user.nationality,
+            startdate:user.startdate,
+            enddate: moment(startdate).add(21,'days').format('YYYY-MM-DD')
             // latitude: user.latitude,
             // longitude: user.longitude,
             // cvc_no: user.cvc_no,
