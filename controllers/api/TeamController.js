@@ -76,6 +76,7 @@ exports.add = [
           created_by: req.user.id,
           team_name: req.body.team_name,
           location: req.body.location,
+          post:req.body.post,
           image: "default.png",
         };
         const team = await teamModel.create(info, (user_type = "coach"));
@@ -92,6 +93,7 @@ exports.add = [
           created_by: req.user.id,
           team_name: req.body.team_name,
           location: req.body.location,
+          post:req.body.post,
           image: req.file.filename,
         };
         const team = await teamModel.create(info);
