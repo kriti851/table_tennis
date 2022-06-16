@@ -3,8 +3,6 @@ const apiResponse = require("../../helpers/apiResponse");
 const auth = require("../../middlewares/jwt");
 const { validationResult, body} = require("express-validator");
 
-
-
 exports.addplayer = [
     auth,
     body("team_id").isLength({ min: 1 }).trim().withMessage("team_id is required."),

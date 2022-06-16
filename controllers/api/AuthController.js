@@ -43,7 +43,10 @@ exports.register = [
     .notEmpty()
     .isLength({ min: 1 })
     .withMessage("Gender is required."),
-  body("dob").trim().isLength({ min: 1 }).withMessage("DOB is required."),
+  body("dob")
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage("DOB is required."),
   body("email")
     .trim()
     .notEmpty()
@@ -221,35 +224,6 @@ exports.register = [
         throw new Error("street_address1 is required");
       return true;
     }),
-  // body("latitude")
-  //  .trim()
-  //  .isNumeric()
-  //  .withMessage("Latitude Must be only Numeric")
-  //  .custom((value, { req }) => {
-  // if (!value) {
-  //   throw new Error("latitude is required");
-  // }
-  // if (req.body.user_type == "coach" && !value)
-  //   throw new Error("latitude is required");
-  // if (req.body.user_type == "user" && !value)
-  //   throw new Error("latitude is required");
-  // if (req.body.user_type == "player" && !value)
-  //   throw new Error("latitude is required");
-  // return true;
-  // }),
-  // body("longitude")
-  //  .trim()
-  //  .isNumeric()
-  //  .withMessage("Longitude Must be only Numeric")
-  //  .custom((value, { req }) => {
-  // if (req.body.user_type == "coach" && !value)
-  //   throw new Error("longitude is required");
-  // if (req.body.user_type == "player" && !value)
-  //   throw new Error("longitude is required");
-  // if (req.body.user_type == "user" && !value)
-  //   throw new Error("user is required");
-  // return true;
-  // }),
   body("street_address2")
        .trim(),
   //   .custom((value, { req }) => {
@@ -436,14 +410,7 @@ exports.register = [
             zip_code: user.zip_code,
             startdate:user.createdAt.toLocaleString(undefined, {timeZone: 'Asia/Kolkata'}),
             enddate: moment(startdate).add(21,'days').format('YYYY-MM-DD')
-            // latitude: user.latitude,
-            // longitude: user.longitude,
-            // cvc_no: user.cvc_no,
-            // card_no: user.card_no,
-            // expiry_month: user.expiry_month,
-            // expiry_year: user.expiry_year,
           };
-
           const secretKey = process.env.JWT_SECRET || "";
           playerInfo.token = jwt.sign({ id: user.id.toString() }, secretKey, {
             expiresIn: process.env.JWT_TIMEOUT_DURATION,
@@ -469,7 +436,7 @@ exports.register = [
             location: user.location,
             nationality: user.nationality,
             startdate:user.createdAt.toLocaleString(undefined, {timeZone: 'Asia/Kolkata'}),
-            enddate: moment(startdate).add(3,'days').format('YYYY-MM-DD hh:mm:ss A')
+            enddate: moment(startdate).add(3,'days').format('YYYY-MM-DD hh:mm:ss A'),
           };
           const secretKey = process.env.JWT_SECRET || "";
           userInfo.token = jwt.sign({ id: user.id.toString() }, secretKey, {
@@ -488,7 +455,6 @@ exports.register = [
     }
   },
 ];
-
 /**
  * User login.
  *
@@ -497,7 +463,6 @@ exports.register = [
  *
  * @returns {Object}
  */
-
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     let path = `./public/uploads/`;
