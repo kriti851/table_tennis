@@ -69,12 +69,12 @@ exports.register = [
       minNumbers: 1,
     })
     .withMessage("password must be strong."),
-  body("confirmpassword").custom((value, { req }) => {
-    if (value !== req.body.password) {
-      throw new Error("Password confirmation does not match with password");
-    }
-    return true;
-  }),
+  // body("confirmpassword").custom((value, { req }) => {
+  //   if (value !== req.body.password) {
+  //     throw new Error("Password confirmation does not match with password");
+  //   }
+  //   return true;
+  // }),
   body("nationality")
     .trim()
     .isAlpha()
@@ -121,8 +121,8 @@ exports.register = [
     }),
   body("hand")
     .trim()
-    .isAlpha("en-US", { ignore: " " })
-    .withMessage("hand Must be only alphabetical chars")
+    // .isAlpha("en-US", { ignore: " " })
+    // .withMessage("hand Must be only alphabetical chars")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
         throw new Error("hand is required");
@@ -132,8 +132,8 @@ exports.register = [
     }),
   body("playing_style")
     .trim()
-    .isAlpha("en-US", { ignore: " " })
-    .withMessage("Playing style Must be in alphabetical chars")
+    // .isAlpha("en-US", { ignore: " " })
+    // .withMessage("Playing style Must be in alphabetical chars")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
         throw new Error("playing style is required");
@@ -143,8 +143,8 @@ exports.register = [
     }),
   body("grip")
     .trim()
-    .isAlpha("en-US", { ignore: " " })
-    .withMessage("Grip Must be only alphabetical chars")
+    // .isAlpha("en-US", { ignore: " " })
+    // .withMessage("Grip Must be only alphabetical chars")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
         throw new Error("grip is required");
@@ -154,8 +154,8 @@ exports.register = [
     }),
   body("height")
     .trim()
-    .isNumeric()
-    .withMessage("Height must be numeric")
+    // .isNumeric()
+    // .withMessage("Height must be numeric")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
         throw new Error("height is required");
@@ -165,30 +165,30 @@ exports.register = [
     }),
   body("team")
     .trim()
-    .isAlpha("en-US", { ignore: " " })
-    .withMessage("Team Must be only alphabetical chars"),
-  // .custom((value, { req }) => {
-  //   if (req.body.user_type == "player" && !value)
-  //     throw new Error("team is required");
-  //   if (req.body.user_type == "coach" && !value)
-  //     throw new Error("team is required");
-  //   return true;
-  // }),
+    // .isAlpha("en-US", { ignore: " " })
+    // .withMessage("Team Must be only alphabetical chars"),
+    .custom((value, { req }) => {
+      if (req.body.user_type == "player" && !value)
+        throw new Error("team is required");
+      if (req.body.user_type == "coach" && !value)
+        throw new Error("team is required");
+      return true;
+    }),
   body("club")
-    .trim()
-    .isAlphanumeric("en-US", { ignore: " " })
-    .withMessage("Club Must be only alphanumeric"),
+    .trim(),
+    // .isAlphanumeric("en-US", { ignore: " " })
+    // .withMessage("Club Must be only alphanumeric"),
   // .custom((value, { req }) => {
   //   if (req.body.user_type == "player" && !value)
   //     throw new Error("club is required");
   //   if (req.body.user_type == "coach" && !value)
   //     throw new Error("club is required");
   //   return true;
-  // }),
+  // })
   body("favorite_serve")
     .trim()
-    .isAlpha("en-US", { ignore: " " })
-    .withMessage("favourite Serve Must be only Char")
+    // .isAlpha("en-US", { ignore: " " })
+    // .withMessage("favourite Serve Must be only Char")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
         throw new Error("favorite_serve is required");
@@ -197,9 +197,9 @@ exports.register = [
       return true;
     }),
   body("awards")
-    .trim()
-    .isAlpha("en-US", { ignore: " " })
-    .withMessage("Award Must be only Char"),
+    .trim(),
+    // .isAlpha("en-US", { ignore: " " })
+    // .withMessage("Award Must be only Char"),
   // .custom((value, { req }) => {
   //   if (req.body.user_type == "player" && !value)
   //     throw new Error("Award is required");
@@ -250,7 +250,8 @@ exports.register = [
   //   throw new Error("user is required");
   // return true;
   // }),
-  body("street_address2").trim(),
+  body("street_address2")
+       .trim(),
   //   .custom((value, { req }) => {
   //   if (req.body.user_type == "player" && !value)
   //     throw new Error("street_address2 is required");
@@ -396,8 +397,8 @@ exports.register = [
             achievements: user.achievements,
             career: user.career,
             nationality: user.nationality,
-            startdate:user.startdate,
-            enddate: moment(startdate).add(21,'days').format('YYYY-MM-DD')
+            startdate:user.createdAt.toLocaleString(undefined, {timeZone: 'Asia/Kolkata'}),
+            enddate: moment(startdate).add(21,'days').format('YYYY-MM-DD hh:mm:ss A')
           };
           const secretKey = process.env.JWT_SECRET || "";
           userData.token = jwt.sign({ id: user.id.toString() }, secretKey, {
@@ -433,7 +434,7 @@ exports.register = [
             achievements: user.achievements,
             career: user.career,
             zip_code: user.zip_code,
-            startdate:user.startdate,
+            startdate:user.createdAt.toLocaleString(undefined, {timeZone: 'Asia/Kolkata'}),
             enddate: moment(startdate).add(21,'days').format('YYYY-MM-DD')
             // latitude: user.latitude,
             // longitude: user.longitude,
@@ -467,14 +468,8 @@ exports.register = [
             zip_code: user.zip_code,
             location: user.location,
             nationality: user.nationality,
-            startdate:user.startdate,
-            enddate: moment(startdate).add(21,'days').format('YYYY-MM-DD')
-            // latitude: user.latitude,
-            // longitude: user.longitude,
-            // cvc_no: user.cvc_no,
-            // card_no: user.card_no,
-            // expiry_month: user.expiry_month,
-            // expiry_year: user.expiry_year,
+            startdate:user.createdAt.toLocaleString(undefined, {timeZone: 'Asia/Kolkata'}),
+            enddate: moment(startdate).add(3,'days').format('YYYY-MM-DD hh:mm:ss A')
           };
           const secretKey = process.env.JWT_SECRET || "";
           userInfo.token = jwt.sign({ id: user.id.toString() }, secretKey, {
