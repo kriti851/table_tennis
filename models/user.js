@@ -161,6 +161,22 @@ const user = sequelize.define('users', {
         type: Sequelize.STRING,
         allowNull: true
     },  
+
+
+        startdate: {
+            type: Sequelize.DATE,
+            allowNull: true
+        },
+
+        enddate: {
+            type: Sequelize.DATE,
+            allowNull: true
+        },
+
+
+
+
+
 },{ 
     timestamps: true,
     // defaultScope: {

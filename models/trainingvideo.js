@@ -16,7 +16,10 @@ const trainingvideo = sequelize.define('trainingvideos', {
     video:{
         type: Sequelize.STRING,
         allowNull: true
-    },     
+    },   
+    
+    approve:Sequelize.ENUM(['1','0']),
+
 },{ 
     timestamps: true,
  

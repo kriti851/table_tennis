@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');    
 const sequelize = require('../config/db');    
     
-const table_tenis_super_admin = sequelize.define('table_tenis_super_admins', {  
+const super_admin = sequelize.define('super_admins', {  
     id:{
         type:Sequelize.NUMBER,    
         allowNull:false,    
@@ -26,4 +26,4 @@ const table_tenis_super_admin = sequelize.define('table_tenis_super_admins', {
  
  });    
     
-  module.exports = table_tenis_super_admin;   
+  module.exports = super_admin;   

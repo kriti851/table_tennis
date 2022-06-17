@@ -7,6 +7,8 @@ var logger = require('morgan');
 // const fileUpload = require('express-fileupload');
 require("dotenv").config();
 var cors = require("cors");
+const { Server } = require("socket.io");
+const io = new Server();
 var indexRouter = require('./routes/index');
 var apiRouter = require("./routes/api/index");
 var adminApiRouter = require("./routes/admin");
@@ -53,4 +55,34 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+
+app.get('/', (req, res) => {
+  res.sendFile(__dirname+'/index.html');
+});
+// const approuter = require("./routes/customer");
+// app.use('/customer',approuter);
+
+
+
+const server = require('http').createServer(app);
+io.on("connection", (socket) => {
+  socket.on("send-message", async (data) => {
+    io.emit("receive-message",data);
+  });
+  socket.on("player-send-message-admin", async (data) => {
+    io.emit("player-receive-message-admin",data);
+  });
+ 
+});
+io.listen(server,{
+  cors: {
+    origin: "*",
+    credentials: false
+  }
+});
+
 module.exports = app;
+
+
+
+

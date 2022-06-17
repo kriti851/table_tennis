@@ -1,6 +1,7 @@
 const TrainingvideoModel = require("../../models/trainingvideo");
 const auth = require("../../middlewares/jwt");
 const { body, validationResult, check } = require("express-validator");
+const sequelize = require('../../config/db');
 const multer = require("multer");
 var path = require("path");
 const fs = require("fs-extra");
@@ -53,6 +54,7 @@ async (req, res) => {
             let infoVideo = {
                 user_id: req.user.id,
                 video: req.file.filename,
+                approve:"1"
             }
             const uploadVideo = await TrainingvideoModel.create(infoVideo)
             infoVideo.video = process.env.VIDEOURL + 'public/uploads/' + uploadVideo.video;
@@ -67,6 +69,124 @@ async (req, res) => {
 
     }
 }];
+
+exports.list = [
+    auth,
+    async (req, res) => {
+        try {
+            const {  pageNumber , pageSize, } = req.body;
+
+            if(pageNumber && pageSize){
+                limit = parseInt(pageSize);
+                offset = limit * (pageNumber - 1);
+            }else{
+                limit = parseInt(10);
+                offset = limit * (1 - 1);
+            }
+            var approve = req.body.approve;
+            if (0 == approve) {
+           const {count,rows:user}  = await TrainingvideoModel.findAndCountAll({
+            offset,limit,
+               attributes: { exclude: ['password', 'confirmpassword'] },
+               attributes: ['id', 'user_id', 'approve', 'createdat', 'updatedat',
+               [sequelize.literal("CONCAT('" + process.env.VIDEOURL + 'public/uploads/' + "',video)"), 'video']
+           ],
+               where:{approve:"0"}
+             
+             });
+
+             let next_page=false
+             if((offset+limit)<count){
+                 next_page=true;
+                 
+             }
+
+            //  if(!{user}.length>0){
+            //     return apiResponse.ErrorResponse(res, 'Something went wrong',user);
+            //  }
+        return apiResponse.successResponseWithData(res, "Successfully retrieve information of uploaded video",{user,count,next_page});  
+        }else{
+
+            const {  pageNumber , pageSize,q } = req.body;
+
+            if(pageNumber && pageSize){
+                limit = parseInt(pageSize);
+                offset = limit * (pageNumber - 1);
+            }else{
+                limit = parseInt(10);
+                offset = limit * (1 - 1);
+            }
+            var  approve  = req.body.approve;
+            if ("1" == approve) {
+                const {count,rows:user}  = await TrainingvideoModel.findAndCountAll({
+                    offset,limit,
+               attributes: { exclude: ['password', 'confirmpassword'] },
+               where:{approve:"1"}
+             
+             });
+             let next_page=false
+             if((offset+limit)<count){
+                 next_page=true;
+                 
+             }
+            // if (!user.length) {
+            //     return apiResponse.ErrorResponse(res, 'Something went wrong', user);
+            // }
+        return apiResponse.successResponseWithData(res, "Successfully retrieve information of uploaded video", {user,count,next_page});
+
+        }
+    }
+        
+     } catch (err) {
+            console.log(err)
+            return apiResponse.ErrorResponse(res, err);
+        }
+    }];
+
+
+    exports.update = [
+        auth,
+        body("id").isLength({ min: 1 }).trim().withMessage("id is required"),
+        async (req, res) => {
+          var errors = validationResult(req);
+          if (!errors.isEmpty()) {
+            return apiResponse.validationErrorWithData(
+              res,
+              "Validation Error.",
+              errors.array()
+            );
+          }
+          var setdata = {
+          
+            approve:req.body.approve
+          };
+          try {
+            await TrainingvideoModel.update(setdata, {
+              where: { id: req.body.id },
+            });
+            var user = await TrainingvideoModel.findOne({
+              where: { id: req.body.id },
+            });
+            if (!user) {
+              return apiResponse.ErrorResponse(
+                res,
+                "No information  found by this user",
+                user
+              );
+            }
+            return apiResponse.successResponseWithData(
+              res,
+              "information updated sucessfully",
+              user
+            );
+          } catch (err) {
+            console.log(err);
+            return apiResponse.ErrorResponse(res, err);
+          }
+        },
+      ];
+     
+
 
 exports.deleteVideo = [
     auth,

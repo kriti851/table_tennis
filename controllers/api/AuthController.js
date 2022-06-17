@@ -11,6 +11,7 @@ const jwt = require("jsonwebtoken");
 const mailer = require("../../helpers/mailer");
 const { constants } = require("../../helpers/constants");
 const { Op } = require("sequelize");
+const moment = require("moment");
 require("dotenv").config();
 /**
  * User registration.
@@ -122,21 +123,21 @@ exports.register = [
         throw new Error("phone is required");
       return true;
     }),
-  body("hand")
-    .trim()
-    .isAlpha("en-US", { ignore: " " })
-    .withMessage("hand Must be only alphabetical chars")
-    .custom((value, { req }) => {
-      if (req.body.user_type == "player" && !value)
-        throw new Error("hand is required");
-      if (req.body.user_type == "coach" && !value)
-        throw new Error("hand is required");
-      return true;
-    }),
+  // body("hand")
+  //   .custom((value, { req }) => {
+  //     if (req.body.user_type == "player" && !value)
+  //      trim()
+  //     .isAlpha("en-US", { ignore: " " })
+  //     .withMessage("hand Must be only alphabetical chars")
+  //       throw new Error("hand is required");
+  //     if (req.body.user_type == "coach" && !value)
+  //       throw new Error("hand is required");
+  //     return true;
+  //   }),
   body("playing_style")
-    .trim()
-    .isAlpha("en-US", { ignore: " " })
-    .withMessage("Playing style Must be in alphabetical chars")
+    // .trim()
+    // .isAlpha("en-US", { ignore: " " })
+    // .withMessage("Playing style Must be in alphabetical chars")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
         throw new Error("playing style is required");
@@ -145,9 +146,9 @@ exports.register = [
       return true;
     }),
   body("grip")
-    .trim()
-    .isAlpha("en-US", { ignore: " " })
-    .withMessage("Grip Must be only alphabetical chars")
+    // .trim()
+    // .isAlpha("en-US", { ignore: " " })
+    // .withMessage("Grip Must be only alphabetical chars")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
         throw new Error("grip is required");
@@ -156,9 +157,9 @@ exports.register = [
       return true;
     }),
   body("height")
-    .trim()
-    .isNumeric()
-    .withMessage("Height must be numeric")
+    // .trim()
+    // .isNumeric()
+    // .withMessage("Height must be numeric")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
         throw new Error("height is required");
@@ -166,10 +167,10 @@ exports.register = [
         throw new Error("height is required");
       return true;
     }),
-  body("team")
-    .trim()
-    .isAlpha("en-US", { ignore: " " })
-    .withMessage("Team Must be only alphabetical chars"),
+  // body("team")
+  //   .trim()
+  //   .isAlpha("en-US", { ignore: " " })
+  //   .withMessage("Team Must be only alphabetical chars"),
     // .custom((value, { req }) => {
     //   if (req.body.user_type == "player" && !value)
     //     throw new Error("team is required");
@@ -177,10 +178,10 @@ exports.register = [
     //     throw new Error("team is required");
     //   return true;
     // }),
-  body("club")
-    .trim()
-    .isAlphanumeric("en-US", { ignore: " " })
-    .withMessage("Club Must be only alphanumeric"),
+  // body("club")
+  //   .trim()
+  //   .isAlphanumeric("en-US", { ignore: " " })
+  //   .withMessage("Club Must be only alphanumeric"),
     // .custom((value, { req }) => {
     //   if (req.body.user_type == "player" && !value)
     //     throw new Error("club is required");
@@ -189,9 +190,9 @@ exports.register = [
     //   return true;
     // }),
   body("favorite_serve")
-    .trim()
-    .isAlpha("en-US", { ignore: " " })
-    .withMessage("favourite Serve Must be only Char")
+    // .trim()
+    // .isAlpha("en-US", { ignore: " " })
+    // .withMessage("favourite Serve Must be only Char")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
         throw new Error("favorite_serve is required");
@@ -199,10 +200,10 @@ exports.register = [
         throw new Error("favorite_serve is required");
       return true;
     }),
-  body("awards")
-    .trim()
-    .isAlpha("en-US", { ignore: " " })
-    .withMessage("Award Must be only Char"),
+  // body("awards")
+  //   .trim()
+  //   .isAlpha("en-US", { ignore: " " })
+  //   .withMessage("Award Must be only Char"),
     // .custom((value, { req }) => {
     //   if (req.body.user_type == "player" && !value)
     //     throw new Error("Award is required");
@@ -376,6 +377,7 @@ exports.register = [
           return apiResponse.ErrorResponse(res, "Something went wrong");
         }
         if ("coach" == req.body.user_type) {
+          startdate =new Date();
           let userData = {
             name: user.name,
             username: user.username,
@@ -410,12 +412,12 @@ exports.register = [
             userData
           );
         } else if ("player" == req.body.user_type) {
+          startdate =new Date();
           let playerInfo = {
             name: user.name,
             username: user.username,
             user_type: user.user_type,
             phone: user.phone,
-         
             email: user.email,
             dob: user.dob,
             gender: user.gender,
@@ -434,6 +436,8 @@ exports.register = [
             achievements: user.achievements,
             career: user.career,
             zip_code: user.zip_code,
+            startdate:user.startdate,
+            enddate: moment(startdate).add(21,'days').format('YYYY-MM-DD')
             // latitude: user.latitude,
             // longitude: user.longitude,
             // cvc_no: user.cvc_no,
@@ -452,6 +456,7 @@ exports.register = [
             playerInfo
           );
         } else {
+          startdate =new Date();
           let userInfo = {
             name: user.name,
             username: user.username,
@@ -465,6 +470,10 @@ exports.register = [
             zip_code: user.zip_code,
             location: user.location,
             nationality: user.nationality,
+            startdate:user.startdate,
+            enddate: moment(startdate).add(7,'days').format('YYYY-MM-DD')
+
+
             // latitude: user.latitude,
             // longitude: user.longitude,
             // cvc_no: user.cvc_no,

@@ -1,4 +1,4 @@
-const admin = require("../../models/table_tenis_super_admin.js");
+const admin = require("../../models/super_admin.js");
 const { body, validationResult } = require("express-validator");
 const apiResponse = require("../../helpers/apiResponse");
 const auth = require("../../middlewares/jwt");
@@ -25,7 +25,8 @@ exports.login = [
     try {
         const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return apiResponse.validationErrorWithData(res, "Validation Error.", errors.array());
+        return apiResponse.validationErrorWithData(res, errors.array({ onlyFirstError: false })[0].msg);
+
     }else {
         const { email, password: pass } = req.body;
         const user = await  admin.findOne({ where: { email: email} });

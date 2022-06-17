@@ -5,6 +5,7 @@ var traingMangeRouter = require("./traingMange");
 var mange_training = require("./mange_training");
 var playervideoRouter = require("./playervideo");
 var teamRouter = require("./team")
+var chatRouter = require("./chat")
 var defaultRouter = require("./default")
 var team_playerRouter =require("./team_player")
 var trainingvideoRouter =require("./trainingvideo")
@@ -17,6 +18,7 @@ var app = express();
 // });
 
 app.use("/auth/", authRouter);
+app.use("/chat/", chatRouter);
 app.use("/user/", userRouter);
 app.use("/training/",mange_training);
 app.use("/mange/",traingMangeRouter);

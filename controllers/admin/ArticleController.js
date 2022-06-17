@@ -50,7 +50,7 @@ exports.add = [
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return apiResponse.validationErrorWithData(res, "Validation Error.", errors.array());
+        return apiResponse.validationErrorWithData(res, errors.array({ onlyFirstError: false })[0].msg);
       }
       // const { filename: image } = req.file;
       if (!req.file) {
@@ -96,21 +96,23 @@ exports.list = [
   auth,
   async (req, res) => {
     try {
-      const {  pageNumber , pageSize } = req.body;
+      const {  pageNumber , pageSize,q } = req.body;
       if(pageNumber && pageSize){
         limit = parseInt(pageSize);
         offset = limit * (pageNumber - 1);
     }else{
         limit = parseInt(10);
         offset = limit * (1 - 1);
-    }
+    }  
+    if(q){
           var search={};
-            var q= req.body.q;
+         
             q=q.replace(/'/g,"");
            search[Op.or]={
                title : {[Op.substring]: q.trim()},
               //  content : {[Op.substring]: q.trim()},
            }
+          }
       const {count,rows:user} = await ArticleModel.findAndCountAll({
         offset,limit,
 

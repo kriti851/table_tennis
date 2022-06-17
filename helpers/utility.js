@@ -7,3 +7,13 @@ exports.randomNumber = function (length) {
 	}
 	return Number(text);
 };
+
+// exports.calculate= (startdate) => {
+// 	var d = new Date();
+// 	d.setDate(d.getDate() + 7);
+// 	console.log(d)
+//     return d;
+// };
+
+
+

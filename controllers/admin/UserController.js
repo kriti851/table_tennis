@@ -51,7 +51,7 @@ exports.list = [
     auth,
     async (req, res) => {
         try {
-           const {  pageNumber , pageSize } = req.body;
+           const {  pageNumber , pageSize,q } = req.body;
 
     if(pageNumber && pageSize){
         limit = parseInt(pageSize);
@@ -61,22 +61,20 @@ exports.list = [
         offset = limit * (1 - 1);
     }
             var search={};
-
-            var q= req.body.q;
-            q=q.replace(/'/g,"");
+        if(q){
            search[Op.or]={
                name : {[Op.substring]: q.trim()},
                email : {[Op.substring]: q.trim()},
                phone : {[Op.substring]: q.trim()},
                mobileNumber : {[Op.substring]: q.trim()},
            };
-          
+        }
 
             const {count,rows:user} = await UserModel.findAndCountAll({
                 offset,limit,
                
                   attributes: [
-                        'id', 'name', 'user_type', 'username', 'phone','mobileNumber', 'plying_style', 'email', 'gender', 'dob', 'career', 'hand', 'phone', 'favorite_serve', 'awards', 'club', 'location', 'street_address1', 'latitude', 'nationality', 'team', 'latitude', 'longitude', 'expiry_month', 'expiry_year', 'createdat', 'updatedat', [sequelize.literal("IF(image!='',CONCAT('" + process.env.IMAGEURL + 'public/uploads/' + "',image),'"+process.env.IMAGEURL+"public/uploads/default.png')"), 'image']
+                        'id', 'name', 'user_type', 'username', 'phone','mobileNumber', 'playing_style', 'email', 'gender', 'dob', 'career', 'hand', 'phone', 'favorite_serve', 'awards', 'club', 'location', 'street_address1', 'latitude', 'nationality', 'team', 'latitude', 'longitude', 'expiry_month', 'expiry_year', 'createdat', 'updatedat', [sequelize.literal("IF(image!='',CONCAT('" + process.env.IMAGEURL + 'public/uploads/' + "',image),'"+process.env.IMAGEURL+"public/uploads/default.png')"), 'image']
                     ],
     
                     where: { 
