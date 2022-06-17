@@ -120,7 +120,7 @@ exports.list_data = [
              
                 attributes: { exclude: ['password', 'confirmpassword'] },
                 attributes: [
-                    'id', 'name', 'user_type', 'username', 'phone','mobileNumber', 'plying_style', 'email', 'gender', 'dob', 'career', 'hand', 'phone', 'favorite_serve', 'awards', 'club', 'location', 'street_address1', 'latitude', 'nationality', 'team', 'latitude', 'longitude', 'expiry_month', 'expiry_year', 'createdat', 'updatedat', [sequelize.literal("IF(image!='',CONCAT('" + process.env.IMAGEURL + 'public/uploads/' + "',image),'"+process.env.IMAGEURL+"public/uploads/default.png')"), 'image']
+                    'id', 'name', 'user_type', 'username', 'phone','mobileNumber', 'playing_style', 'email', 'gender', 'dob', 'career', 'hand', 'phone', 'favorite_serve', 'awards', 'club', 'location', 'street_address1', 'latitude', 'nationality', 'team', 'latitude', 'longitude', 'expiry_month', 'expiry_year', 'createdat', 'updatedat', [sequelize.literal("IF(image!='',CONCAT('" + process.env.IMAGEURL + 'public/uploads/' + "',image),'"+process.env.IMAGEURL+"public/uploads/default.png')"), 'image']
                 ],
 
                 where: {
@@ -131,7 +131,7 @@ exports.list_data = [
                 }
             });
             if (!user.length) {
-                return apiResponse.ErrorResponse(res, 'Something went wrong', user);
+                return apiResponse.ErrorResponse(res, 'user does not exist', user);
             }
             var { user_type } = req.body;
             if ("coach" == user_type) {
@@ -159,7 +159,7 @@ exports.update_user = [
         var body = req.body;
         var errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return apiResponse.validationErrorWithData(res, "Validation Error.", errors.array());
+            return apiResponse.validationErrorWithData(res, errors.array({ onlyFirstError: false })[0].msg);
         }
      if(req.file){
         var set_data = {
@@ -172,7 +172,7 @@ exports.update_user = [
             'user_type': req.body.user_type,
             'hand': body.hand,
             'phone': body.phone,
-            'plying_style': body.plying_style,
+            'playing_style': body.playing_style,
             "favorite_serve": body.favorite_serve,
             "grip": body.grip,
             'height': body.height,
@@ -203,7 +203,7 @@ exports.update_user = [
             'user_type': req.body.user_type,
             'hand': body.hand,
             'phone': body.phone,
-            'plying_style': body.plying_style,
+            'playing_style': body.playing_style,
             "favorite_serve": body.favorite_serve,
             "grip": body.grip,
             'height': body.height,
