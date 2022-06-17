@@ -67,7 +67,6 @@ exports.add = [
         return apiResponse.successResponseWithData(res, "Article Added  Sucessfully", info);
 
       } else {
-
         let info = {
           title: req.body.title,
           content: req.body.content,
@@ -76,7 +75,6 @@ exports.add = [
         }
 
         const articlefile = await ArticleModel.create(info)
-
         info.image = articlefile.image ? process.env.IMAGEURL + 'public/uploads/' + articlefile.image : process.env.IMAGEURL + 'public/uploads/default.png';
         return apiResponse.successResponseWithData(res, "Article Added  Sucessfully", info);
 
@@ -106,8 +104,6 @@ exports.list = [
     }  
     if(q){
           var search={};
-         
-            q=q.replace(/'/g,"");
            search[Op.or]={
                title : {[Op.substring]: q.trim()},
               //  content : {[Op.substring]: q.trim()},
@@ -121,10 +117,10 @@ exports.list = [
           [sequelize.literal("CONCAT('" + process.env.IMAGEURL + 'public/uploads/' + "',image)"), 'image']
           ],
 
-      //     where: { 
+          where: { 
       
-      //        ...search,
-      // },
+             ...search
+      },
 
         });
      

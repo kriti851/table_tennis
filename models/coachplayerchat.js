@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');    
 const sequelize = require('../config/db');    
     
-const adminplayerchat = sequelize.define('adminplayerchats', {  
+const coachplayerchat = sequelize.define('coachplayerchats', {  
 id:{
 type:Sequelize.NUMBER,    
 allowNull:false,    
@@ -34,5 +34,5 @@ autoIncrement: true
  
  });    
     
-  module.exports = adminplayerchat; 
+  module.exports = coachplayerchat; 
 

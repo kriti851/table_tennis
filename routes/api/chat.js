@@ -1,9 +1,12 @@
 var express = require("express");
-const PlayeradminchatController = require("../../controllers/api/PlayeradminchatController");
+const CoachplayerchatController = require("../../controllers/api/CoachplayerchatController");
 
 var router = express.Router();
 
-router.post("/playersendmessage", PlayeradminchatController.sendmessage);
+router.post("/playersendmessage", CoachplayerchatController.sendmessage);
+
+router.post("/coachsendmessage", CoachplayerchatController.coachsendmessage);
+
 
 
 module.exports = router;
