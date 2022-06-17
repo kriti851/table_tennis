@@ -126,6 +126,7 @@ exports.list = [
                     attributes: ['id', 'user_id', 'approve','title', 'createdat', 'updatedat',
                     [sequelize.literal("CONCAT('" + process.env.VIDEOURL + 'public/uploads/' + "',video)"), 'video']
                 ],
+                where:{approve:"1"}
              
              });
              let next_page=false
