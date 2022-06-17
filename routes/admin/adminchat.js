@@ -1,9 +1,9 @@
 var express = require("express");
-const PlayeradminchatController = require("../../controllers/api/PlayeradminchatController");
+const AdminplayerController = require("../../controllers/admin/AdminplayerController");
 
 var router = express.Router();
 
-router.post("/adminsendmessage", PlayeradminchatController.sendmessage);
+router.post("/adminsendmessage", AdminplayerController.sendmessage);
 
 
 module.exports = router;

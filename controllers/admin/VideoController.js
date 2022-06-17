@@ -60,7 +60,7 @@ async (req, res) => {
             }
             const uploadVideo = await TrainingvideoModel.create(infoVideo)
             infoVideo.video = process.env.VIDEOURL + 'public/uploads/' + uploadVideo.video;
-            return apiResponse.successResponseWithData(res, "Training video  upload Sucessfully", infoVideo);
+            return apiResponse.successResponseWithData(res, "Training video  uploaded Sucessfully", infoVideo);
         } else {
             return apiResponse.ErrorResponse(res,"please upload only video not other files");
         }
@@ -122,8 +122,10 @@ exports.list = [
             if ("1" == approve) {
                 const {count,rows:user}  = await TrainingvideoModel.findAndCountAll({
                     offset,limit,
-               attributes: { exclude: ['password', 'confirmpassword'] },
-               where:{approve:"1"}
+                    attributes: { exclude: ['password', 'confirmpassword'] },
+                    attributes: ['id', 'user_id', 'approve', 'createdat', 'updatedat',
+                    [sequelize.literal("CONCAT('" + process.env.VIDEOURL + 'public/uploads/' + "',video)"), 'video']
+                ],
              
              });
              let next_page=false
