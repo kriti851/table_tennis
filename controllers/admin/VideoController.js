@@ -123,7 +123,7 @@ exports.list = [
                 const {count,rows:user}  = await TrainingvideoModel.findAndCountAll({
                     offset,limit,
                     attributes: { exclude: ['password', 'confirmpassword'] },
-                    attributes: ['id', 'user_id', 'approve', 'createdat', 'updatedat',
+                    attributes: ['id', 'user_id', 'approve','title', 'createdat', 'updatedat',
                     [sequelize.literal("CONCAT('" + process.env.VIDEOURL + 'public/uploads/' + "',video)"), 'video']
                 ],
              
