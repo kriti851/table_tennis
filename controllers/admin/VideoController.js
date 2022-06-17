@@ -42,6 +42,7 @@ const videoUpload = multer({
 exports.uploadvideo = [
 auth,
 videoUpload.single('video'),
+body("title").isLength({ min: 1 }).trim().withMessage("title  is required"),
 async (req, res) => {
 
     try {
@@ -54,6 +55,7 @@ async (req, res) => {
             let infoVideo = {
                 user_id: req.user.id,
                 video: req.file.filename,
+                title:req.body.title,
                 approve:"1"
             }
             const uploadVideo = await TrainingvideoModel.create(infoVideo)

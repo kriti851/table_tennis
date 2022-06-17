@@ -12,6 +12,11 @@ const trainingvideo = sequelize.define('trainingvideos', {
         type:Sequelize.NUMBER, 
         allowNull:true,   
     },  
+
+    title:{
+        type:Sequelize.STRING, 
+        allowNull:true,   
+    }, 
     
     video:{
         type: Sequelize.STRING,
