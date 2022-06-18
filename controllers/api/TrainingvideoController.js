@@ -55,7 +55,7 @@ async (req, res) => {
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(res, errors.array({ onlyFirstError: false })[0].msg);
         }
-   
+     
         if(req.file){
             let infoVideo = {
                 user_id: req.user.id,
