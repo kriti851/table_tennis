@@ -35,6 +35,7 @@ exports.add = [
       .isLength({ min: 1 }) 
       .withMessage("content  is required"),
       async (req, res) => {
+        console.log(req)
     try {
       const errors = validationResult(req);
     if (!errors.isEmpty()) {

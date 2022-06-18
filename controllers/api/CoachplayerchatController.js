@@ -1,5 +1,7 @@
 
 const coachplayerchatModel = require("../../models/coachplayerchat");
+const recentchatModel = require("../../models/coachplayerchat");
+
 const apiResponse = require("../../helpers/apiResponse");
 const auth = require("../../middlewares/jwt");
 const { body, validationResult } = require("express-validator");
@@ -61,3 +63,43 @@ exports.sendmessage = [
             return apiResponse.ErrorResponse(res, err);
             }
         }];
+
+        exports.recentChat = [
+            auth,
+         async (req, res) => {
+          try{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return apiResponse.validationErrorWithData(res, "Validation Error.",errors.array({ onlyFirstError: false })[0].msg);
+            }
+            var body =req.body;
+            var recentChat = await recentchatModel.findOne({
+                where:{
+                    userId:body.userId,
+                }
+            });
+            if(recentChat){
+                recentChat.message=body.message;
+                recentChat.type=body.type;
+                recentChat.messageFrom='coach';
+                recentChat.userUnreadCount=(recentChat.userUnreadCount+1);
+                await recentChat.save();
+            }else{
+                await CustomerAdminRecentChat.create({
+                    userId:body.userId,
+                    message:body.message,
+                    type:body.type,
+                    messageFrom:'admin',
+                    userUnreadCount:1,
+       
+                });
+            }
+        }
+        catch (err) {
+            console.log(err,"dfffffffffffffffffffff")
+        return apiResponse.ErrorResponse(res, err);
+        }
+    }];
+
+
+

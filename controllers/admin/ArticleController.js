@@ -171,9 +171,10 @@ exports.update = [
     } else {
       var set_data = {
         title: body.title,
-        content: body.content
+        content: body.content,
+        image:"default.png"
       }
-
+      set_data.image = process.env.IMAGEURL + 'public/uploads/' + set_data.image
     }
     try {
       await ArticleModel.update(set_data, { where: { id: req.body.id } });

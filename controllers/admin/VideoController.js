@@ -92,7 +92,7 @@ exports.list = [
            const {count,rows:user}  = await TrainingvideoModel.findAndCountAll({
             offset,limit,
                attributes: { exclude: ['password', 'confirmpassword'] },
-               attributes: ['id', 'user_id', 'approve','title', 'createdat', 'updatedat',
+               attributes: ['id', 'user_id', 'approve','title','description', 'createdat', 'updatedat',
                [sequelize.literal("CONCAT('" + process.env.VIDEOURL + 'public/uploads/' + "',video)"), 'video']
            ],
                where:{approve:"0"}
@@ -125,7 +125,7 @@ exports.list = [
                 const {count,rows:user}  = await TrainingvideoModel.findAndCountAll({
                     offset,limit,
                     attributes: { exclude: ['password', 'confirmpassword'] },
-                    attributes: ['id', 'user_id', 'approve','title', 'createdat', 'updatedat',
+                    attributes: ['id', 'user_id', 'approve','title','description', 'createdat', 'updatedat',
                     [sequelize.literal("CONCAT('" + process.env.VIDEOURL + 'public/uploads/' + "',video)"), 'video']
                 ],
                 where:{approve:"1"}
@@ -163,9 +163,9 @@ exports.list = [
                  );
 
                 if(!user){
-                  return apiResponse.successResponseWithData(res, "please add the player",user);
+                  return apiResponse.successResponseWithData(res, "No information found ",user);
                 }
-                return apiResponse.successResponseWithData(res,"Your list of player which you added",user );
+                return apiResponse.successResponseWithData(res,"Information retrive sucessfully",user );
               } catch (err) {
                   console.log(err)
                 return apiResponse.ErrorResponse(res, err);

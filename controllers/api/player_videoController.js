@@ -90,7 +90,7 @@ exports.plyer_wholelist = [
       "updatedat",
     [
     sequelize.literal(
-      "CONCAT('" + process.env.IMAGEURL + "public/uploads/" + "',video)"
+      "CONCAT('" + process.env.VIDEOURL + "public/uploads/" + "',video)"
     ),
       "video",
          ],
@@ -99,12 +99,12 @@ exports.plyer_wholelist = [
     if (!getvideo.length > 0) {
         return apiResponse.successResponseWithData(
           res,
-          "No Article uploaded by this id"
+          "Information not found"
         );
       }
         return apiResponse.successResponseWithData(
         res,
-        "List of article",
+        "List of video uploaded by player",
         getvideo
       );
     } catch (err) {
@@ -128,7 +128,7 @@ exports.plyerlist = [
       "updatedat",
     [
     sequelize.literal(
-      "CONCAT('" + process.env.IMAGEURL + "public/uploads/" + "',video)"
+      "CONCAT('" + process.env.VIDEOURL + "public/uploads/" + "',video)"
     ),
       "video",
           ],
@@ -143,7 +143,7 @@ exports.plyerlist = [
       }
         return apiResponse.successResponseWithData(
         res,
-        "List of article",
+        "List of Video",
         getvideo
       );
     } catch (err) {
