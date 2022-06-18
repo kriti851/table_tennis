@@ -44,18 +44,20 @@ exports.uploadvideo = [
 auth,
 videoUpload.single('video'),
 body("title").isLength({ min: 1 }).trim().withMessage("title  is required"),
+body("description").isLength({ min: 1 }).trim().withMessage("description  is required"),
 async (req, res,err) => {
 
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return apiResponse.validationErrorWithData(res, "Validation Error.", errors.array());
+          return apiResponse.validationErrorWithData(res, errors.array({ onlyFirstError: false })[0].msg);
         }
         if(req.file){
             let infoVideo = {
                 user_id: req.user.id,
                 video: req.file.filename,
                 title:req.body.title,
+                description:req.body.description,
                 approve:"1"
             }
             const uploadVideo = await TrainingvideoModel.create(infoVideo)

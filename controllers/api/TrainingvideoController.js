@@ -46,19 +46,23 @@ const videoUpload = multer({
 exports.Trainingvideo = [
 auth,
 videoUpload.single('video'),
+body("title").isLength({ min: 1 }).trim().withMessage("title  is required"),
+body("description").isLength({ min: 1 }).trim().withMessage("description  is required"),
 async (req, res) => {
 
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return apiResponse.validationErrorWithData(res, "Validation Error.", errors.array());
+            return apiResponse.validationErrorWithData(res, errors.array({ onlyFirstError: false })[0].msg);
         }
    
         if(req.file){
             let infoVideo = {
                 user_id: req.user.id,
                 video: req.file.filename,
-                approve:"0"
+                title:req.body.title,
+                approve:"0",
+                description:req.body.description,
             
             }
             const uploadVideo = await TrainingvideoModel.create(infoVideo)
