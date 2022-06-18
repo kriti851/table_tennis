@@ -34,7 +34,8 @@ function fileFilter(req, file, cb){
 const videoUpload = multer({
     storage: videoStorage,
     limits: {
-    fileSize: 10000000 // 10000000 Bytes = 10 MB
+    fileSize: 10000000// 100000000 Bytes = 1MB
+    
     },
     fileFilter:fileFilter,
 })
@@ -43,14 +44,13 @@ exports.uploadvideo = [
 auth,
 videoUpload.single('video'),
 body("title").isLength({ min: 1 }).trim().withMessage("title  is required"),
-async (req, res) => {
+async (req, res,err) => {
 
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return apiResponse.validationErrorWithData(res, "Validation Error.", errors.array());
         }
-   
         if(req.file){
             let infoVideo = {
                 user_id: req.user.id,
@@ -149,6 +149,31 @@ exports.list = [
     }];
 
 
+   exports.info_user = [
+            auth,
+            async (req, res) => {
+              try {
+                var user = await sequelize.query(
+                  "SELECT trainingvideos.user_id,users.username,users.email,users.user_type from trainingvideos INNER JOIN users ON trainingvideos.user_id= users.id;", 
+                    // "SELECT team_players.team_id, team_players.player_id,users.username,users.mobileNumber,users.email,users.club from team_players  INNER JOIN users ON team_players.player_id= users.id;", 
+                     {type:sequelize.QueryTypes.SELECT}
+                  
+                 );
+
+                if(!user){
+                  return apiResponse.successResponseWithData(res, "please add the player",user);
+                }
+                return apiResponse.successResponseWithData(res,"Your list of player which you added",user );
+              } catch (err) {
+                  console.log(err)
+                return apiResponse.ErrorResponse(res, err);
+              }
+            }
+          ];
+
+
+
+
     exports.update = [
         auth,
         body("id").isLength({ min: 1 }).trim().withMessage("id is required"),
@@ -164,6 +189,51 @@ exports.list = [
           var setdata = {
           
             approve:req.body.approve
+          };
+          try {
+            await TrainingvideoModel.update(setdata, {
+              where: { id: req.body.id },
+            });
+            var user = await TrainingvideoModel.findOne({
+              where: { id: req.body.id },
+            });
+            if (!user) {
+              return apiResponse.ErrorResponse(
+                res,
+                "No information  found by this user",
+                user
+              );
+            }
+            return apiResponse.successResponseWithData(
+              res,
+              "information updated sucessfully",
+              user
+            );
+          } catch (err) {
+            console.log(err);
+            return apiResponse.ErrorResponse(res, err);
+          }
+        },
+      ];
+
+
+
+
+      exports.Disable_update = [
+        auth,
+        body("id").isLength({ min: 1 }).trim().withMessage("id is required"),
+        async (req, res) => {
+          var errors = validationResult(req);
+          if (!errors.isEmpty()) {
+            return apiResponse.validationErrorWithData(
+              res,
+              "Validation Error.",
+              errors.array()
+            );
+          }
+          var setdata = {
+          
+            disable:req.body.disable
           };
           try {
             await TrainingvideoModel.update(setdata, {

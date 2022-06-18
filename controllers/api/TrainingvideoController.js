@@ -58,6 +58,8 @@ async (req, res) => {
             let infoVideo = {
                 user_id: req.user.id,
                 video: req.file.filename,
+                approve:"0"
+            
             }
             const uploadVideo = await TrainingvideoModel.create(infoVideo)
             infoVideo.video = process.env.VIDEOURL + 'public/uploads/' + uploadVideo.video;
