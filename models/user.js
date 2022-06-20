@@ -37,14 +37,14 @@ const user = sequelize.define('users', {
             msg: 'Email address already in use!'
         }
     },
-    // password: {
-    //     type: Sequelize.STRING,
-    //     allowNull: true
-    // },
-    // confirmpassword:{
-    //     type:Sequelize.STRING,
-    //     allowNull:true
-    // },
+    password: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },
+    confirmpassword:{
+        type:Sequelize.STRING,
+        allowNull:true
+    },
     image:{
         type: Sequelize.STRING,
         allowNull: true

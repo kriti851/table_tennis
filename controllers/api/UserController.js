@@ -1,7 +1,7 @@
 const UserModel = require("../../models/user");
 const { body, validationResult, check } = require("express-validator");
 const apiResponse = require("../../helpers/apiResponse");
-const bcrypt = require("bcryptjs");
+const Password = require('node-php-password');
 const auth = require("../../middlewares/jwt");
 var path = require("path");
 const fs = require("fs-extra");
@@ -42,105 +42,169 @@ const profileUpload = multer({
     fileFilter: fileFilter,
     });
 
-//Update Profile
-exports.update = [
-    auth,
-    body("first_name")
-        .trim()
-        .isLength({ min: 1 }) 
-        .withMessage("First name must be specified.")
-        .isAlphanumeric()
-        .withMessage("First name has non-alphanumeric characters."),
-    body("last_name")
-        .trim()
-        .isLength({ min: 1 }) 
-        .withMessage("Last name must be specified.")
-        .isAlphanumeric()
-        .withMessage("Last name has non-alphanumeric characters."),
-    body("email")
+
+    exports.detail = [
+      auth,
+      async (req, res) => {
+        try {
+          const user = await UserModel.findOne({
+            attributes: { exclude: ["password", "confirmpassword", "otp"] },
+            where: { id: req.user.id },
+          });
+    
+          if (!user) {
+            return apiResponse.ErrorResponse(res, "Something went wrong");
+          }
+            user.image = user.image ? process.env.IMAGEURL + 'public/uploads/' + user.image : process.env.IMAGEURL + 'public/uploads/default.png';
+          return apiResponse.successResponseWithData(res, "User Informsation reterive Sudcessfully", user);
+        } catch (err) {
+          return apiResponse.ErrorResponse(res, err);
+        }
+      },
+    ];
+    exports.update = [
+      auth,
+      check("name")
+    .trim()
+    .notEmpty()
+    .withMessage("Name is Required")
+    .isAlpha("en-US", { ignore: " " })
+    .withMessage("Must be only alphabetical chars"),
+  check("username")
+    .trim()
+    .notEmpty()
+    .withMessage("Username is Required")
+    .isAlpha("en-US", { ignore: " " })
+    .withMessage("Must be only alphabetical chars"),
+      body("email")
         .trim()
         .isLength({ min: 1 })
         .withMessage("Email must be specified.")
         .isEmail()
         .withMessage("Email must be a valid email address.")
         .custom(async (value, { req }) => {
-      // console.log('auth=',req.user.id)
-      const user = await UserModel.findOne({ where: { email: value } });
-    if (user && user.id != req.user.id) {
-        return Promise.reject("E-mail already in use");
-      }
-    }),
-    body("password")
-        .custom((value, { req }) => {
-    if (value) {
-    if (value.length < 6) {
-        throw new Error("New Password must be 6 characters or greater.");
-      }
-    if (!req.body.old_password) {
-        throw new Error(
-          "Old  password is required and must be 6 characters or greater."
-        );
-    }
-    if (req.body.confirm_password !== req.body.password) {
-        throw new Error("Password confirmation does not match password");
-      }
-    }
-    // Indicates the success of this synchronous custom validator
-       return true;
-    }),
-    body("first_name").escape(),
-    body("last_name").escape(),
-       async (req, res) => {
-    try {
-       const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return apiResponse.validationErrorWithData(
-          res,
-          "Validation Error.",
-          errors.array()
-        );
-      } else {
-        const { email, first_name, last_name } = req.body;
-        const user = await UserModel.findOne({ where: { id: req.user.id } });
-    if (user) {
-           let userData = {
-            email: email,
-            first_name: first_name,
-            last_name: last_name,
-          };
-    if (req.body.password) {
-            const isMatch = await bcrypt.compare(
-            req.body.old_password,
-            user.password
-            );
-    if (!isMatch) {
-        return apiResponse.ErrorResponse(res, "Incorrect old password!");
-            }
-            const pass = await bcrypt.hash(req.body.password, 10);
-            userData.password = pass;
+          // console.log('auth=',req.user.id)
+          const user = await UserModel.findOne({ where: { email: value } });
+          if (user && user.id != req.user.id) {
+            return Promise.reject("E-mail already in use");
           }
-          const result = await UserModel.update(userData, {
-            where: { id: req.user.id },
-          });
-    if (!result) {
-        return apiResponse.unauthorizedResponse(
-            res,
-            "Something went wrong!"
+        }),
+    
+      body("password").custom((value, { req }) => {
+        if (value) {
+          if (value.length < 6) {
+            throw new Error("New Password must be 6 characters or greater.");
+          }
+          if (!req.body.old_password) {
+            throw new Error(
+              "Old  password is required and must be 6 characters or greater."
             );
+          }
+          if (req.body.confirm_password !== req.body.password) {
+            throw new Error("Password confirmation does not match password");
+          }
         }
-        return apiResponse.successResponse(res, "User updated successfully.");
-    } else {
-        return apiResponse.unauthorizedResponse(
-            res,
-            "No authorization token was found."
-          );
+        // Indicates the success of this synchronous custom validator
+        return true;
+      }),
+      body("name").escape(),
+      body("username").escape(),
+      async (req, res) => {
+        try {
+          const errors = validationResult(req);
+          if (!errors.isEmpty()) {
+              return apiResponse.validationErrorWithData(
+                res,
+                errors.array({ onlyFirstError: false })[0].msg
+              );
+          } else {
+            const {
+              name,
+              username,
+              email,
+              phone,
+              playing_style,
+              career,
+              nationality,
+              team,
+              club,
+              grip,
+              hand,
+              location,
+              achievements,
+              expiry_month,
+              expiry_year,
+              card_no,
+              zip_code,
+              awards,
+              favorite_serve,
+            } = req.body;
+            const user = await UserModel.findOne({ where: { id: req.user.id } });
+            if (user) {
+              let userData = {
+                name: name,
+                email: email,
+                username: username,
+                phone: phone,
+                playing_style: playing_style,
+                team: team,
+                club: club,
+                career: career,
+                grip: grip,
+                nationality: nationality,
+                hand: hand,
+                location: location,
+                achievements: achievements,
+                expiry_month: expiry_month,
+                expiry_year: expiry_year,
+                card_no: card_no,
+                zip_code: zip_code,
+                awards: awards,
+                favorite_serve: favorite_serve,
+              };
+              if (req.body.password) {
+                const isMatch = await bcrypt.compare(
+                  req.body.old_password,
+                  user.password
+                );
+                if (!isMatch) {
+                  return apiResponse.ErrorResponse(res, "Incorrect old password!");
+                }
+                const pass = await bcrypt.hash(req.body.password, 10);
+                userData.password = pass;
+              }
+              const result = await UserModel.update(userData, {
+                where: { id: req.user.id },
+              });
+              if (!result) {
+                return apiResponse.unauthorizedResponse(
+                  res,
+                  "Something went wrong!"
+                );
+              }
+              return apiResponse.successResponse(
+                res,
+                "User updated successfully.",
+                user
+              );
+            } else {
+              return apiResponse.unauthorizedResponse(
+                res,
+                "No authorization token was found."
+              );
+            }
+          }
+        } catch (err) {
+          console.log(err);
+          return apiResponse.ErrorResponse(res, err);
         }
-      }
-    } catch (err) {
-      return apiResponse.ErrorResponse(res, err);
-    }
-  },
-];
+      },
+    ];
+    
+    
+
+//Update Profile
+
 //Change Password
 exports.changePassword = [
     auth,

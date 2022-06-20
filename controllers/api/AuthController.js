@@ -1,30 +1,19 @@
 const UserModel = require("../../models/user");
 const moment = require("moment");
+const Password = require("node-php-password");
+// const Confirmpassword = require('node-php-password');
 const { body, validationResult, check } = require("express-validator");
-
 const multer = require("multer");
 var path = require("path");
 const fs = require("fs-extra");
 const { v4: uuidv4 } = require("uuid");
 const apiResponse = require("../../helpers/apiResponse");
 const utility = require("../../helpers/utility");
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const mailer = require("../../helpers/mailer");
 const { constants } = require("../../helpers/constants");
 const { Op } = require("sequelize");
 require("dotenv").config();
-/**
- * User registration.
- *
- * @param {string}      firstName
- * @param {string}      lastName
- * @param {string}      email
- * @param {string}      password
- *
- * @returns {Object}
- */
-//Registration API For USER/PLAYER/COACH
 exports.register = [
   check("name")
     .trim()
@@ -43,10 +32,7 @@ exports.register = [
     .notEmpty()
     .isLength({ min: 1 })
     .withMessage("Gender is required."),
-  body("dob")
-    .trim()
-    .isLength({ min: 1 })
-    .withMessage("DOB is required."),
+  body("dob").trim().isLength({ min: 1 }).withMessage("DOB is required."),
   body("email")
     .trim()
     .notEmpty()
@@ -72,12 +58,12 @@ exports.register = [
       minNumbers: 1,
     })
     .withMessage("password must be strong."),
-  // body("confirmpassword").custom((value, { req }) => {
-  //   if (value !== req.body.password) {
-  //     throw new Error("Password confirmation does not match with password");
-  //   }
-  //   return true;
-  // }),
+  body("confirmpassword").custom((value, { req }) => {
+    if (value !== req.body.password) {
+      throw new Error("Password confirmation does not match with password");
+    }
+    return true;
+  }),
   body("nationality")
     .trim()
     .isAlpha()
@@ -155,17 +141,17 @@ exports.register = [
         throw new Error("grip is required");
       return true;
     }),
-//   body("height")
-//      .trim(),
-    // .isNumeric()
-    // .withMessage("Height must be numeric")
-    // .custom((value, { req }) => {
-    //   if (req.body.user_type == "player")
-    //     throw new Error("height is required");
-    //   if (req.body.user_type == "coach")
-    //     throw new Error("height is required");
-    //   return true;
-    // }),
+  //   body("height")
+  //      .trim(),
+  // .isNumeric()
+  // .withMessage("Height must be numeric")
+  // .custom((value, { req }) => {
+  //   if (req.body.user_type == "player")
+  //     throw new Error("height is required");
+  //   if (req.body.user_type == "coach")
+  //     throw new Error("height is required");
+  //   return true;
+  // }),
   body("team")
     .trim()
     // .isAlpha("en-US", { ignore: " " })
@@ -177,10 +163,9 @@ exports.register = [
         throw new Error("team is required");
       return true;
     }),
-  body("club")
-    .trim(),
-    // .isAlphanumeric("en-US", { ignore: " " })
-    // .withMessage("Club Must be only alphanumeric"),
+  body("club").trim(),
+  // .isAlphanumeric("en-US", { ignore: " " })
+  // .withMessage("Club Must be only alphanumeric"),
   // .custom((value, { req }) => {
   //   if (req.body.user_type == "player" && !value)
   //     throw new Error("club is required");
@@ -199,10 +184,9 @@ exports.register = [
         throw new Error("favorite_serve is required");
       return true;
     }),
-  body("awards")
-    .trim(),
-    // .isAlpha("en-US", { ignore: " " })
-    // .withMessage("Award Must be only Char"),
+  body("awards").trim(),
+  // .isAlpha("en-US", { ignore: " " })
+  // .withMessage("Award Must be only Char"),
   // .custom((value, { req }) => {
   //   if (req.body.user_type == "player" && !value)
   //     throw new Error("Award is required");
@@ -224,8 +208,7 @@ exports.register = [
         throw new Error("street_address1 is required");
       return true;
     }),
-  body("street_address2")
-       .trim(),
+  body("street_address2").trim(),
   body("zip_code")
     .trim()
     .isNumeric()
@@ -244,7 +227,7 @@ exports.register = [
         throw new Error("zip code is required");
       return true;
     }),
-  
+
   // Sanitize fields.
   body("user_type").escape(),
   body("username").escape(),
@@ -260,15 +243,25 @@ exports.register = [
           errors.array({ onlyFirstError: false })[0].msg
         );
       } else {
+        // if (req.body.password) {
+        //   // req.body.password = await bcrypt.hash(req.body.password, 10);
+        //   req.body.password = Password.hash(req.body.password)
+        // }
+        // console.log(req.body.password)
+        //  if (req.body.confirmpassword) {
+        //   req.body.confirmpassword = Password.hash(
+        //     req.body.confirmpassword,
+        //   );
+        // }
+
         if (req.body.password) {
-          req.body.password = await bcrypt.hash(req.body.password, 10);
+          req.body.password = Password.hash(req.body.password);
         }
+
         if (req.body.confirmpassword) {
-          req.body.confirmpassword = await bcrypt.hash(
-            req.body.confirmpassword,
-            10
-          );
+          req.body.confirmpassword = Password.hash(req.body.confirmpassword);
         }
+
         const result = await UserModel.create(req.body);
         if (!result) {
           return apiResponse.ErrorResponse(res, "Something went wrong");
@@ -279,7 +272,7 @@ exports.register = [
           return apiResponse.ErrorResponse(res, "Something went wrong");
         }
         if ("coach" == req.body.user_type) {
-          startdate =new Date();
+          startdate = new Date();
           let userData = {
             name: user.name,
             username: user.username,
@@ -303,8 +296,12 @@ exports.register = [
             achievements: user.achievements,
             career: user.career,
             nationality: user.nationality,
-            startdate:user.createdAt.toLocaleString(undefined, {timeZone: 'Asia/Kolkata'}),
-            enddate: moment(startdate).add(21,'days').format('YYYY-MM-DD hh:mm:ss A')
+            startdate: user.createdAt.toLocaleString(undefined, {
+              timeZone: "Asia/Kolkata",
+            }),
+            enddate: moment(startdate)
+              .add(21, "days")
+              .format("YYYY-MM-DD hh:mm:ss A"),
           };
           const secretKey = process.env.JWT_SECRET || "";
           userData.token = jwt.sign({ id: user.id.toString() }, secretKey, {
@@ -316,7 +313,7 @@ exports.register = [
             userData
           );
         } else if ("player" == req.body.user_type) {
-          startdate =new Date();
+          startdate = new Date();
           let playerInfo = {
             name: user.name,
             username: user.username,
@@ -340,8 +337,12 @@ exports.register = [
             achievements: user.achievements,
             career: user.career,
             zip_code: user.zip_code,
-            startdate:user.createdAt.toLocaleString(undefined, {timeZone: 'Asia/Kolkata'}),
-            enddate: moment(startdate).add(21,'days').format('YYYY-MM-DD hh:mm:ss A')
+            startdate: user.createdAt.toLocaleString(undefined, {
+              timeZone: "Asia/Kolkata",
+            }),
+            enddate: moment(startdate)
+              .add(21, "days")
+              .format("YYYY-MM-DD hh:mm:ss A"),
           };
           const secretKey = process.env.JWT_SECRET || "";
           playerInfo.token = jwt.sign({ id: user.id.toString() }, secretKey, {
@@ -353,7 +354,7 @@ exports.register = [
             playerInfo
           );
         } else {
-          startdate =new Date();
+          startdate = new Date();
           let userInfo = {
             name: user.name,
             username: user.username,
@@ -367,8 +368,12 @@ exports.register = [
             zip_code: user.zip_code,
             location: user.location,
             nationality: user.nationality,
-            startdate:user.createdAt.toLocaleString(undefined, {timeZone: 'Asia/Kolkata'}),
-            enddate: moment(startdate).add(6,'days').format('YYYY-MM-DD HH:mm:ss A z'),
+            startdate: user.createdAt.toLocaleString(undefined, {
+              timeZone: "Asia/Kolkata",
+            }),
+            enddate: moment(startdate)
+              .add(6, "days")
+              .format("YYYY-MM-DD HH:mm:ss A z"),
           };
           const secretKey = process.env.JWT_SECRET || "";
           userInfo.token = jwt.sign({ id: user.id.toString() }, secretKey, {
@@ -449,7 +454,7 @@ exports.login = [
           errors.array()
         );
       } else {
-        const { email, password: pass } = req.body;
+        const { email, password } = req.body;
         const user = await UserModel.findOne({ where: { email: email } });
         if (!user) {
           return apiResponse.unauthorizedResponse(
@@ -457,33 +462,36 @@ exports.login = [
             "Incorrect email address!"
           );
         }
-        const isMatch = await bcrypt.compare(pass, user.password);
-        if (!isMatch) {
+        if (
+          user.password &&
+          Password.verify(req.body.password, user.password)
+        ) {
+          var IMAGEURL = "http://localhost:3000/";
+          let userData = {
+            name: user.name,
+            username: user.username,
+            phone: user.phone,
+            email: user.email,
+            dob: user.dob,
+            image: user.image
+              ? IMAGEURL + user.image
+              : IMAGEURL + "public/uploads/default.png",
+            gender: user.gender,
+            user_type: user.user_type,
+          };
+          // user matched!
+          const secretKey = process.env.JWT_SECRET || "";
+          userData.token = jwt.sign({ id: user.id.toString() }, secretKey, {
+            expiresIn: process.env.JWT_TIMEOUT_DURATION,
+          });
+          return apiResponse.successResponseWithData(
+            res,
+            "LoggedIn Successfully.",
+            userData
+          );
+        } else {
           return apiResponse.ErrorResponse(res, "Incorrect password!");
         }
-        var IMAGEURL = "http://localhost:3000/";
-        let userData = {
-          name: user.name,
-          username: user.username,
-          phone: user.phone,
-          email: user.email,
-          dob: user.dob,
-          image: user.image
-            ? IMAGEURL + user.image
-            : IMAGEURL + "public/uploads/default.png",
-          gender: user.gender,
-          user_type: user.user_type,
-        };
-        // user matched!
-        const secretKey = process.env.JWT_SECRET || "";
-        userData.token = jwt.sign({ id: user.id.toString() }, secretKey, {
-          expiresIn: process.env.JWT_TIMEOUT_DURATION,
-        });
-        return apiResponse.successResponseWithData(
-          res,
-          "LoggedIn Successfully.",
-          userData
-        );
       }
     } catch (err) {
       console.log(err);
