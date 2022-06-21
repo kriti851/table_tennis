@@ -7,7 +7,7 @@ var playervideoRouter = require("./playervideo");
 var teamRouter = require("./team")
 var defaultRouter = require("./default")
 var team_playerRouter =require("./team_player")
-var trainingvideoRouter =require("./trainingvideo")
+var shortclipRouter =require("./shortclip")
 var articlerouter = require("./article");
 var apiResponse = require("../../helpers/apiResponse");
 var app = express();
@@ -24,7 +24,7 @@ app.use("/team/",teamRouter);
 app.use("/player/",team_playerRouter);
 app.use("/video/",playervideoRouter);
 app.use("/default/",defaultRouter);
-app.use("/trainingvideo/",trainingvideoRouter);
+app.use("/clip/",shortclipRouter);
 app.use("/article/", articlerouter);
 
 // throw 404 if URL not found

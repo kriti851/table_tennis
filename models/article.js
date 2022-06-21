@@ -21,10 +21,7 @@ autoIncrement: true
         type: Sequelize.STRING,
         allowNull: true,      
     },
-    video:{
-        type: Sequelize.STRING,
-        allowNull: true
-    },    
+   
 },{ 
     timestamps: true,
  

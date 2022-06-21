@@ -92,7 +92,7 @@ exports.list = [
           "updatedat",
           [
             sequelize.literal(
-              "CONCAT('" + process.env.IMAGEURL + "uploads/" + "',image)"
+              "CONCAT('" + process.env.IMAGEURL + "public/uploads/" + "',image)"
             ),
             "image",
           ],
