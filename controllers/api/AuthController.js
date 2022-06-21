@@ -3,10 +3,7 @@ const moment = require("moment");
 const Password = require("node-php-password");
 // const Confirmpassword = require('node-php-password');
 const { body, validationResult, check } = require("express-validator");
-const multer = require("multer");
 var path = require("path");
-const fs = require("fs-extra");
-const { v4: uuidv4 } = require("uuid");
 const apiResponse = require("../../helpers/apiResponse");
 const utility = require("../../helpers/utility");
 const jwt = require("jsonwebtoken");
@@ -400,36 +397,7 @@ exports.register = [
  *
  * @returns {Object}
  */
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    let path = `./public/uploads/`;
-    fs.mkdirsSync(path);
-    cb(null, path);
-  },
-  filename: function (req, file, cb) {
-    cb(
-      null,
-      "articles" + uuidv4() + "-" + Date.now() + path.extname(file.originalname)
-    );
-  },
-});
 
-const fileFilter = (req, file, cb) => {
-  const allowedFileTypes = ["image/jpeg", "image/jpg", "image/png"];
-  if (allowedFileTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-};
-
-var fileUpload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 2,
-  },
-  fileFilter: fileFilter,
-});
 
 //Login API
 exports.login = [
@@ -443,7 +411,6 @@ exports.login = [
     .trim()
     .isLength({ min: 1 })
     .withMessage("Password must be specified."),
-  fileUpload.single("image"),
   async (req, res) => {
     try {
       const errors = validationResult(req);
@@ -466,16 +433,13 @@ exports.login = [
           user.password &&
           Password.verify(req.body.password, user.password)
         ) {
-          var IMAGEURL = "http://localhost:3000/";
+         
           let userData = {
             name: user.name,
             username: user.username,
             phone: user.phone,
             email: user.email,
             dob: user.dob,
-            image: user.image
-              ? IMAGEURL + user.image
-              : IMAGEURL + "public/uploads/default.png",
             gender: user.gender,
             user_type: user.user_type,
           };
