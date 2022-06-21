@@ -44,43 +44,55 @@ var fileUpload = multer({
 //Add Articles by Admin
 exports.add = [
   auth,
-  fileUpload.single("image"),
-    body("title")
-      .trim()
-      .isLength({ min: 1 })
-      .withMessage("title  is required"),
-   body("content")
-      .trim()
-      .isLength({ min: 1 })
-      .withMessage("content  is required"),
+
+  fileUpload.single('image'),
+  body("title").isLength({ min: 1 }).trim().withMessage("Title  is required"),
+  body("content").isLength({ min: 1 }).trim().withMessage("Content  is required"),
   async (req, res) => {
+
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return apiResponse.validationErrorWithData(res, errors.array({ onlyFirstError: false })[0].msg);
       }
-      const { filename: image } = req.file;
-      let info = {
-        title: req.body.title,
-        content: req.body.content,
-        image: req.file.filename,
-      };
-      const articlefile = await ArticleModel.create(info);
-      info.image = process.env.IMAGEURL + "public/uploads/" + articlefile.image;
-      return apiResponse.successResponseWithData(
-        res,
-        "Article uploaded Sucessfully",
-        info
-      );
-    } catch (err) {
+      
+      if (!req.file) {
+        let info = {
+          title: req.body.title,
+          content: req.body.content,
+          image: 'default.png'
+
+        }
+
+        const articlefile = await ArticleModel.create(info)
+
+        info.image = articlefile.image ? process.env.IMAGEURL + 'public/uploads/' + articlefile.image : process.env.IMAGEURL + 'public/uploads/default.png';
+        return apiResponse.successResponseWithData(res, "Article Added  Sucessfully", info);
+
+      } else {
+
+        let info = {
+          title: req.body.title,
+          content: req.body.content,
+          image: req.file.filename
+
+        }
+
+        const articlefile = await ArticleModel.create(info)
+
+        info.image = articlefile.image ? process.env.IMAGEURL + 'public/uploads/' + articlefile.image : process.env.IMAGEURL + 'public/uploads/default.png';
+        return apiResponse.successResponseWithData(res, "Article Added  Sucessfully", info);
+
+      }
+    }
+    catch (err) {
       const errorInfo = {
         title: req.body,
-        file: req.file,
-      };
+        file: req.file
+      }
       return apiResponse.ErrorResponse(res, errorInfo);
     }
-  },
-];
+  }];
 
 //Article List by admin
 exports.list = [
