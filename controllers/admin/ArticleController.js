@@ -57,11 +57,7 @@ exports.add = [
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return apiResponse.validationErrorWithData(
-          res,
-          "Validation Error.",
-          errors.array()
-        );
+        return apiResponse.validationErrorWithData(res, errors.array({ onlyFirstError: false })[0].msg);
       }
       const { filename: image } = req.file;
       let info = {
@@ -197,7 +193,7 @@ exports.update = [
     var body = req.body;
     var errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return apiResponse.validationErrorWithData(res, "Validation Error.", errors.array());
+      return apiResponse.validationErrorWithData(res, errors.array({ onlyFirstError: false })[0].msg);
     }
     if (req.file) {
       var set_data = {
