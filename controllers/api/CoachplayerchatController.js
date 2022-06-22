@@ -9,20 +9,16 @@ const { body, validationResult } = require("express-validator");
 exports.sendmessage = [
     auth,
     body("message").isLength({ min: 1 }).trim().withMessage("message is required"),
+    
     body('type').isIn(['image','video','text']).withMessage('Please send valid message type.'),
-
     async (req, res) => {
     try {
-        const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return apiResponse.validationErrorWithData(res, "Validation Error.",errors.array({ onlyFirstError: false })[0].msg);
-    }
-    
+     
     let message_info = {
-        sender_id:req.user.userId,
-        receiver_id :req.body.receiver_id,
-        message: req.body.message,
-        type: req.body.type,
+        sender_id:req.user.id,
+        receiver_id:req.body.receiver_id,
+        message:req.body.message,
+        type:req.body.type,
         messageFrom:"player"
     
     }
@@ -49,7 +45,7 @@ exports.sendmessage = [
         }
         
         let info = {
-            sender_id:req.user.userId,
+            sender_id:req.user.id,
             receiver_id :req.body.receiver_id,
             message: req.body.message,
             type: req.body.type,

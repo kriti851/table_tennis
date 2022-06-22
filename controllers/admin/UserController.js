@@ -1,9 +1,8 @@
 const UserModel = require("../../models/user");
 const sequelize = require("../../config/db");
-const { body, validationResult, check } = require("express-validator");
+const { body, validationResult} = require("express-validator");
 const { Op } = require("sequelize");
 const apiResponse = require("../../helpers/apiResponse");
-const bcrypt = require("bcryptjs");
 const auth = require("../../middlewares/jwt");
 require("dotenv").config();
 
@@ -11,28 +10,28 @@ require("dotenv").config();
 exports.list = [
   auth,
   async (req, res) => {
-    try {
-      var limit = 5;
-      var offest = 0;
-      if (typeof req.query.page != "undefined" && req.query.page > 1) {
-        offest = (req.query.page - 1) * limit;
+  try {
+        const {  pageNumber , pageSize,q } = req.body;
+
+        if(pageNumber && pageSize){
+          limit = parseInt(pageSize);
+          offset = limit * (pageNumber - 1);
+      }else{
+          limit = parseInt(10);
+          offset = limit * (1 - 1);
       }
-      var sort = "id";
-      var sortDirection = "desc";
-      if (typeof req.query.sort != "undefined" && req.query.sort != "") {
-        sort = req.query.sort;
-        sortDirection = req.query.sortDirection;
-      }
-      var search = {};
-      if (typeof req.query.q != "undefined" && req.query.q != "") {
-        var q = req.query.q;
-        //q=q.replace(/'/g,"");
-        search[Op.or] = {
-          name: { [Op.substring]: q.trim() },
-          email: { [Op.substring]: q.trim() },
-        };
-      }
+        if(q){
+          var search={};
+           search[Op.or]={
+               name : {[Op.substring]: q.trim()},
+              email : {[Op.substring]: q.trim()},
+           }
+          }
       const { count, rows: user } = await UserModel.findAndCountAll({
+        offset,limit,
+        order: [
+            ['id', 'DESC'],
+        ],
         attributes: [
           "id",
           "name",
@@ -47,6 +46,7 @@ exports.list = [
           "hand",
           "phone",
           "favorite_serve",
+          "tournament_played",
           "awards",
           "club",
           "location",
@@ -74,13 +74,14 @@ exports.list = [
         ],
         where: {
           user_type: req.body.user_type,
-          ...search,
+          ...search
         },
-        limit: [offest, limit],
+       
       });
-      let next_page = false;
-      if (offest + limit < count) {
-        next_page = true;
+      let next_page=false
+      if((offset+limit)<count){
+          next_page=true;
+          
       }
       var { user_type } = req.body;
       if ("coach" == user_type) {
