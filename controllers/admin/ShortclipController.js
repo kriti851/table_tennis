@@ -34,11 +34,27 @@ function fileFilter(req, file, cb) {
 }
 const videoUpload = multer({
   storage: videoStorage,
-  limits: {
-    fileSize: 10000000, // 100000000 Bytes = 1MB
-  },
+  // limits: {
+  //   fileSize: 1000000, // 100000000 Bytes = 1MB
+  // },
   fileFilter: fileFilter,
 });
+
+// const videoUpload = multer({
+//   limits: {
+//     fieldNameSize: 300,
+//     fileSize: 1000000, // 10 Mb
+//   },
+//   fileFilter: (req, file, callback) => {
+//     const fileSize = parseInt(req.headers['content-length']);
+//     if (fileSize > 1000000) {
+//       return callback(new Error('...'));
+//     }
+
+//     callback(null, true);
+//   }
+// })
+
 
 exports.uploadvideo = [
   auth,
@@ -48,7 +64,16 @@ exports.uploadvideo = [
     .isLength({ min: 1 })
     .trim()
     .withMessage("description  is required"),
-  async (req, res, err) => {
+  
+  async (req, res) => {
+    var fileSize = 2000000;
+    var  fileSize = parseInt(req.headers['content-length']);
+    if (fileSize > 2000000) {
+     return apiResponse.ErrorResponse(
+      res,
+       "please upload video only less then 30 second"
+      );
+     }
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -83,6 +108,7 @@ exports.uploadvideo = [
       console.log(err);
       return apiResponse.ErrorResponse(res, err);
     }
+  
   },
 ];
 
@@ -377,3 +403,5 @@ exports.deleteVideo = [
     }
   },
 ];
+
+
