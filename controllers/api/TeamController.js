@@ -45,19 +45,31 @@ var fileUpload = multer({
 exports.add = [
   auth,
   fileUpload.single("image"),
-  check("team_name")
+  body("team_name")
     .trim()
     .notEmpty()
     .withMessage("team_name is Required")
     .isAlpha("en-US", { ignore: " " })
     .withMessage("Must be only alphabetical chars"),
-  check("location")
+  body("location")
     .trim()
     .notEmpty()
     .withMessage("location is Required")
     .isAlpha("en-US", { ignore: " " })
     .withMessage("Must be only alphabetical chars"),
-  check("post")
+  body("team_activity")
+    .trim(),
+    // .notEmpty()
+    // .withMessage("post is Required")
+    // .isAlpha("en-US", { ignore: " " })
+    // .withMessage("Must be only alphabetical chars"),
+  body("who_can_post")
+    .trim(),
+  body("invite")
+    .trim(),
+  body("team_notification")
+    .trim(),
+  body("post")
     .trim()
     .notEmpty()
     .withMessage("post is Required")

@@ -23,15 +23,26 @@ autoIncrement: true
         type: Sequelize.STRING,
         allowNull: true
     },
-     post: {
+    team_activity: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
+    who_can_post: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
+    invite: {
+      type: Sequelize.STRING,
+      allowNull: true
+    },
+    team_notification: {
         type: Sequelize.STRING,
         allowNull: true
     },
     location: {
         type: Sequelize.STRING,
         allowNull: true
-    },
-     
+    },    
 },{ 
     timestamps: true}); 
 
