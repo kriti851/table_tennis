@@ -42,7 +42,7 @@ const videoUpload = multer({
   fileFilter: fileFilter,
 });
 
-exports.Trainingvideo = [
+exports.uploadvideo = [
   auth,
   videoUpload.single("video"),
   body("title").isLength({ min: 1 }).trim().withMessage("title  is required"),
@@ -50,30 +50,38 @@ exports.Trainingvideo = [
     .isLength({ min: 1 })
     .trim()
     .withMessage("description  is required"),
+  
   async (req, res) => {
+    var fileSize = 2000000;
+    var  fileSize = parseInt(req.headers['content-length']);
+    if (fileSize > 2000000) {
+     return apiResponse.ErrorResponse(
+      res,
+       "please upload video only less then 30 second"
+      );
+     }
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return apiResponse.validationErrorWithData(
           res,
-          "Validation Error.",
-          errors.array()
+          errors.array({ onlyFirstError: false })[0].msg
         );
       }
-
       if (req.file) {
         let infoVideo = {
           user_id: req.user.id,
           video: req.file.filename,
           title: req.body.title,
           description: req.body.description,
+          approve: "0",
         };
         const uploadVideo = await TrainingvideoModel.create(infoVideo);
         infoVideo.video =
           process.env.VIDEOURL + "public/uploads/" + uploadVideo.video;
         return apiResponse.successResponseWithData(
           res,
-          "Training video  upload Sucessfully",
+          "Training video  uploaded Sucessfully",
           infoVideo
         );
       } else {
@@ -86,6 +94,7 @@ exports.Trainingvideo = [
       console.log(err);
       return apiResponse.ErrorResponse(res, err);
     }
+  
   },
 ];
 

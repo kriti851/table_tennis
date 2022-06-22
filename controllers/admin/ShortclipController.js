@@ -10,107 +10,6 @@ const apiResponse = require("../../helpers/apiResponse");
 const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
 require("dotenv").config();
-const videoStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    let path = `./public/uploads/`;
-    fs.mkdirsSync(path);
-    cb(null, path);
-  },
-  filename: function (req, file, cb) {
-    cb(
-      null,
-      "" + uuidv4() + "-" + Date.now() + path.extname(file.originalname)
-    );
-  },
-});
-function fileFilter(req, file, cb) {
-  const extension = file.mimetype.split("/")[0];
-  if (extension !== "video") {
-    console.log(extension, "dssssssssssss");
-    // return cb(new Error('Something went wrong'), false);
-    return cb(console.log("Something went wrong"), false);
-  }
-  cb(null, true);
-}
-const videoUpload = multer({
-  storage: videoStorage,
-  // limits: {
-  //   fileSize: 1000000, // 100000000 Bytes = 1MB
-  // },
-  fileFilter: fileFilter,
-});
-
-// const videoUpload = multer({
-//   limits: {
-//     fieldNameSize: 300,
-//     fileSize: 1000000, // 10 Mb
-//   },
-//   fileFilter: (req, file, callback) => {
-//     const fileSize = parseInt(req.headers['content-length']);
-//     if (fileSize > 1000000) {
-//       return callback(new Error('...'));
-//     }
-
-//     callback(null, true);
-//   }
-// })
-
-
-exports.uploadvideo = [
-  auth,
-  videoUpload.single("video"),
-  body("title").isLength({ min: 1 }).trim().withMessage("title  is required"),
-  body("description")
-    .isLength({ min: 1 })
-    .trim()
-    .withMessage("description  is required"),
-  
-  async (req, res) => {
-    var fileSize = 2000000;
-    var  fileSize = parseInt(req.headers['content-length']);
-    if (fileSize > 2000000) {
-     return apiResponse.ErrorResponse(
-      res,
-       "please upload video only less then 30 second"
-      );
-     }
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return apiResponse.validationErrorWithData(
-          res,
-          errors.array({ onlyFirstError: false })[0].msg
-        );
-      }
-      if (req.file) {
-        let infoVideo = {
-          user_id: req.user.id,
-          video: req.file.filename,
-          title: req.body.title,
-          description: req.body.description,
-          approve: "1",
-        };
-        const uploadVideo = await TrainingvideoModel.create(infoVideo);
-        infoVideo.video =
-          process.env.VIDEOURL + "public/uploads/" + uploadVideo.video;
-        return apiResponse.successResponseWithData(
-          res,
-          "Training video  uploaded Sucessfully",
-          infoVideo
-        );
-      } else {
-        return apiResponse.ErrorResponse(
-          res,
-          "please upload only video not other files"
-        );
-      }
-    } catch (err) {
-      console.log(err);
-      return apiResponse.ErrorResponse(res, err);
-    }
-  
-  },
-];
 
 exports.list = [
   auth,
@@ -386,7 +285,7 @@ exports.deleteVideo = [
     console.log(req);
     try {
       const data = await TrainingvideoModel.destroy({
-        where: { id: req.body.id, user_id: req.user.id },
+        where: { id: req.body.id },
       });
 
       if (!data) {

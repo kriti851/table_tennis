@@ -2,6 +2,7 @@ var express = require("express");
 var authRouter = require("./auth");
 var chatRouter = require("./chat")
 var userRouter = require("./user");
+var promotionrouter = require("./promotion");
 var traingMangeRouter = require("./traingMange");
 var mange_training = require("./mange_training");
 var playervideoRouter = require("./playervideo");
@@ -28,6 +29,7 @@ app.use("/video/",playervideoRouter);
 app.use("/default/",defaultRouter);
 app.use("/clip/",shortclipRouter);
 app.use("/article/", articlerouter);
+app.use("/promotion/", promotionrouter);
 
 // throw 404 if URL not found
 app.all("*", function(req, res) {
