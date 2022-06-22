@@ -25,6 +25,7 @@ exports.list = [
            search[Op.or]={
                name : {[Op.substring]: q.trim()},
               email : {[Op.substring]: q.trim()},
+              phone:{[Op.substring]: q.trim()},
            }
           }
       const { count, rows: user } = await UserModel.findAndCountAll({

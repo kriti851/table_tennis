@@ -1,15 +1,12 @@
 
 const coachplayerchatModel = require("../../models/coachplayerchat");
 const recentchatModel = require("../../models/coachplayerchat");
-
 const apiResponse = require("../../helpers/apiResponse");
 const auth = require("../../middlewares/jwt");
 const { body, validationResult } = require("express-validator");
-
 exports.sendmessage = [
     auth,
     body("message").isLength({ min: 1 }).trim().withMessage("message is required"),
-    
     body('type').isIn(['image','video','text']).withMessage('Please send valid message type.'),
     async (req, res) => {
     try {
