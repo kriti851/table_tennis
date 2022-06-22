@@ -7,6 +7,8 @@ router.post("/list_history", ShortclipController.list_history);
 router.get("/user-info", ShortclipController.info_user);
 router.post("/update", ShortclipController.update);
 router.post("/disableupdate", ShortclipController.Disable_update);
+router.get("/disablevideolist", ShortclipController.disablelist);
+router.get("/approvevideolist", ShortclipController.approvelist);
 router.post("/deletevideo", ShortclipController.deleteVideo);
 
 

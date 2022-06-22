@@ -118,17 +118,17 @@ exports.list = [
           description: { [Op.substring]: q.trim() },
         };
       }
-      var approve = req.body.approve;
-      console.log(approve, "dffffffffffff");
-      if (1 == approve) {
+      // var approve = req.body.approve;
+      // console.log(approve, "dffffffffffff");
+      // if (1 == approve) {
         const { count, rows: user } = await TrainingvideoModel.findAndCountAll({
           offset,
           limit,
-          attributes: { exclude: ["password", "confirmpassword"] },
           attributes: [
             "id",
             "user_id",
             "approve",
+            "disable",
             "title",
             "description",
             "createdat",
@@ -144,11 +144,20 @@ exports.list = [
             ],
           ],
 
-          where: {
-            approve: "1",
+          // where: {
+          //   approve: "1",
 
+          //   ...search,
+          // },
+
+
+          where: {
             ...search,
-          },
+            [Op.and]: [
+                { approve:"1"},
+                { disable:"0"},
+                
+          ]}
         });
 
         let next_page = false;
@@ -163,7 +172,7 @@ exports.list = [
           "Successfully retrieve information of uploaded video",
           { user, count, next_page }
         );
-      }
+      
     } catch (err) {
       console.log(err);
       return apiResponse.ErrorResponse(res, err);
