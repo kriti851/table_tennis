@@ -150,16 +150,16 @@ exports.register = [
   //   return true;
   // }),
   body("team")
-    .trim()
+    .trim(),
     // .isAlpha("en-US", { ignore: " " })
     // .withMessage("Team Must be only alphabetical chars"),
-    .custom((value, { req }) => {
-      if (req.body.user_type == "player" && !value)
-        throw new Error("team is required");
-      if (req.body.user_type == "coach" && !value)
-        throw new Error("team is required");
-      return true;
-    }),
+    // .custom((value, { req }) => {
+    //   if (req.body.user_type == "player" && !value)
+    //     throw new Error("team is required");
+    //   if (req.body.user_type == "coach" && !value)
+    //     throw new Error("team is required");
+    //   return true;
+    // }),
   body("club").trim(),
   // .isAlphanumeric("en-US", { ignore: " " })
   // .withMessage("Club Must be only alphanumeric"),
@@ -181,7 +181,8 @@ exports.register = [
         throw new Error("favorite_serve is required");
       return true;
     }),
-  body("awards").trim(),
+  body("awards")
+    .trim(),
   // .isAlpha("en-US", { ignore: " " })
   // .withMessage("Award Must be only Char"),
   // .custom((value, { req }) => {
@@ -191,6 +192,8 @@ exports.register = [
   //     throw new Error("Award  is required");
   //   return true;
   // }),
+  body("tournament_played")
+     .trim(),
   body("street_address1")
     .trim()
     .custom((value, { req }) => {
@@ -205,7 +208,8 @@ exports.register = [
         throw new Error("street_address1 is required");
       return true;
     }),
-  body("street_address2").trim(),
+  body("street_address2")
+    .trim(),
   body("zip_code")
     .trim()
     .isNumeric()
@@ -331,15 +335,12 @@ exports.register = [
             team: user.team,
             club: user.club,
             awards: user.awards,
+            tournament_played:user.tournament_played,
             achievements: user.achievements,
             career: user.career,
             zip_code: user.zip_code,
-            startdate: user.createdAt.toLocaleString(undefined, {
-              timeZone: "Asia/Kolkata",
-            }),
-            enddate: moment(startdate)
-              .add(21, "days")
-              .format("YYYY-MM-DD hh:mm:ss A"),
+            startdate:user.createdAt.toLocaleString(undefined, {timeZone: 'Asia/Kolkata'}),
+            enddate: moment(startdate).add(21,'days').format('YYYY-MM-DD hh:mm:ss A')
           };
           const secretKey = process.env.JWT_SECRET || "";
           playerInfo.token = jwt.sign({ id: user.id.toString() }, secretKey, {

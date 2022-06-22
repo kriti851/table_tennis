@@ -105,6 +105,10 @@ const user = sequelize.define('users', {
         type: Sequelize.STRING,
         allowNull: true
     },
+    tournament_played:{
+        type: Sequelize.INTEGER,
+        allowNull: true
+    },
      achievements:{
         type: Sequelize.INTEGER,
         allowNull: true
