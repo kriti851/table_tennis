@@ -7,7 +7,6 @@ var path = require("path");
 const fs = require("fs-extra");
 const { v4: uuidv4 } = require("uuid");
 const multer = require("multer");
-const { title } = require("process");
 const videoStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     let path = `./public/uploads/`;
@@ -21,8 +20,19 @@ const videoStorage = multer.diskStorage({
     );
   },
 });
+
+function fileFilter(req, file, cb) {
+  const extension = file.mimetype.split("/")[0];
+  if (extension !== "video") {
+    console.log(extension, "dssssssssssss");
+    // return cb(new Error('Something went wrong'), false);
+    return cb(console.log("Something went wrong"), false);
+  }
+  cb(null, true);
+}
 const videoUpload = multer({
   storage: videoStorage,
+  fileFilter: fileFilter,
 });
 
 //Video Uploaded by Player with Content
@@ -47,8 +57,9 @@ exports.player_video = [
           errors.array()
         );
       }
-      const { filename: video } = req.file;
+      // const { filename: video } = req.file;
       if ("player" == req.body.user_type) {
+        if (req.file) {
         let info = {
           user_id: req.user.id,
           title: req.body.title,
@@ -63,6 +74,15 @@ exports.player_video = [
           "practising video upload Sucessfully by Player",
           data
         );
+         }
+          else {
+            return apiResponse.ErrorResponse(
+              res,
+              "please upload only video not other files"
+            );
+          }
+
+        
       } else {
         return apiResponse.ErrorResponse(res, "you are not player");
       }
@@ -101,12 +121,12 @@ exports.plyer_wholelist = [
       if (!getvideo.length > 0) {
         return apiResponse.successResponseWithData(
           res,
-          "No Article uploaded by this id"
+          "No video upload by this user"
         );
       }
       return apiResponse.successResponseWithData(
         res,
-        "List of article",
+        "List of player",
         getvideo
       );
     } catch (err) {
@@ -141,12 +161,12 @@ exports.plyerlist = [
       if (!getvideo.length > 0) {
         return apiResponse.successResponseWithData(
           res,
-          "No Article uploaded by this id"
+          "No video uploaded by this user"
         );
       }
       return apiResponse.successResponseWithData(
         res,
-        "List of article",
+        "List of player",
         getvideo
       );
     } catch (err) {
