@@ -39,6 +39,7 @@ exports.list = [
           include: [{
             model: users,
             // where: { id:"242" } ,
+            attributes: { exclude: ["video"] },
             attributes:['id','name','email'
             ],
            }],
@@ -98,7 +99,14 @@ exports.list = [
             await TrainingvideoModel.findAndCountAll({
               offset,
               limit,
-              attributes: { exclude: ["password", "confirmpassword"] },
+              order: [["id", "DESC"]],
+              include: [{
+                model: users,
+                // where: { id:"242" } ,
+   
+                attributes:['id','name','email'
+                ],
+               }],
               attributes: [
                 "id",
                 "user_id",
