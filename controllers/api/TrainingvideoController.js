@@ -69,9 +69,8 @@ exports.trainingvideo = [
                     title: req.body.title,
                     description: req.body.description,
                   };
-             }
-
-
+                  const uploadVideo = await TrainingvideoModel.create(infoVideo);
+                }
         }catch (err) {
             return apiResponse.ErrorResponse(res, err);
           }
