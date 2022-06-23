@@ -1,7 +1,6 @@
 
 const coachplayerchatModel = require("../../models/coachplayerchat");
-const recentchatModel = require("../../models/coachplayerchat");
-const sequelize = require("../../config/db");
+// const recentchatModel = require("../../models/coachplayerchat");
 const apiResponse = require("../../helpers/apiResponse");
 const auth = require("../../middlewares/jwt");
 const { body, validationResult } = require("express-validator");

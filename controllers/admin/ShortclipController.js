@@ -1,8 +1,8 @@
 const TrainingvideoModel = require("../../models/shortclip");
+const users = require("../../models/user");
 const auth = require("../../middlewares/jwt");
-const { body, validationResult, check } = require("express-validator");
-const sequelize = require("../../config/db");
-const multer = require("multer");
+const { body, validationResult } = require("express-validator");
+const sequelize = require("../../config/db");;
 var path = require("path");
 const fs = require("fs-extra");
 const { v4: uuidv4 } = require("uuid");
@@ -36,7 +36,13 @@ exports.list = [
           offset,
           limit,
           order: [["id", "DESC"]],
-          attributes: { exclude: ["password", "confirmpassword"] },
+          include: [{
+            model: users,
+            // where: { id:"242" } ,
+            attributes:['id','name','email'
+            ],
+           }],
+
           attributes: [
             "id",
             "user_id",
@@ -62,6 +68,7 @@ exports.list = [
           },
         });
 
+       
         let next_page = false;
         if (offset + limit < count) {
           next_page = true;
@@ -170,34 +177,6 @@ exports.list_history = [
   },
 ];
 
-exports.info_user = [
-  auth,
-  async (req, res) => {
-    try {
-      var user = await sequelize.query(
-        "SELECT shortclips.user_id,users.username,users.email,users.user_type from shortclips INNER JOIN users ON shortclips.user_id= users.id;",
-        // "SELECT team_players.team_id, team_players.player_id,users.username,users.mobileNumber,users.email,users.club from team_players  INNER JOIN users ON team_players.player_id= users.id;",
-        { type: sequelize.QueryTypes.SELECT }
-      );
-
-      if (!user) {
-        return apiResponse.successResponseWithData(
-          res,
-          "No information found ",
-          user
-        );
-      }
-      return apiResponse.successResponseWithData(
-        res,
-        "Information retrive sucessfully",
-        user
-      );
-    } catch (err) {
-      console.log(err);
-      return apiResponse.ErrorResponse(res, err);
-    }
-  },
-];
 
 exports.update = [
   auth,

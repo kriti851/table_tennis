@@ -4,7 +4,7 @@ var router = express.Router();
 // router.post("/uploadvideo", ShortclipController.uploadvideo);
 router.post("/list", ShortclipController.list);
 router.post("/list_history", ShortclipController.list_history);
-router.get("/user-info", ShortclipController.info_user);
+// router.get("/user-info", ShortclipController.info_user);
 router.post("/update", ShortclipController.update);
 router.post("/disableupdate", ShortclipController.Disable_update);
 router.post("/disablevideolist", ShortclipController.disablelist);

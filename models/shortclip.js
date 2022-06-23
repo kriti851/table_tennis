@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');    
-const sequelize = require('../config/db');    
+const sequelize = require('../config/db');  
+const users = require("./user");   
     
 const shortclip = sequelize.define('shortclips', {  
     id:{
@@ -32,8 +33,14 @@ const shortclip = sequelize.define('shortclips', {
     disable:Sequelize.ENUM(['1','0']),
 
 },{ 
-    timestamps: true,
- 
- });    
+    timestamps: true});
+    shortclip.hasOne(users, {
+        foreignKey: {
+          name: 'id',
+          allowNull: false,
+        },
+         sourceKey : 'user_id',
+        // as : 'images'
+      })    
     
   module.exports =shortclip;    
