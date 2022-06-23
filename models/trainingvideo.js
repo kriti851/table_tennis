@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');    
 const sequelize = require('../config/db');   
-const shortclip = sequelize.define('shortclips', {  
+const trainingvideo = sequelize.define('trainingvideos', {  
     id:{
         type:Sequelize.NUMBER,    
         allowNull:false,    
@@ -31,4 +31,4 @@ const shortclip = sequelize.define('shortclips', {
 
 },{ 
     timestamps: true});
-  module.exports =shortclip;  
+  module.exports =trainingvideo;  
