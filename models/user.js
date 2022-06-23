@@ -49,10 +49,10 @@ const user = sequelize.define('users', {
         type: Sequelize.STRING,
         allowNull: true
     },
-    // video:{
-    //     type: Sequelize.STRING,
-    //     allowNull: true
-    // },
+    video:{
+        type: Sequelize.STRING,
+        allowNull: true
+    },
     gender: Sequelize.ENUM(['male', 'female', 'other']),
 
     dob: {
