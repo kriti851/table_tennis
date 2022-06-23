@@ -1,4 +1,4 @@
-const VideotrainingModel = require("../../model/trainingvideo")
+const VideotrainingModel = require("../../models/trainingvideo")
 const auth = require("../../middlewares/jwt");
 const { body, validationResult } = require("express-validator")
 const apiResponse = require("../../helpers/apiResponse");
@@ -6,7 +6,6 @@ const sequelize = require("../../config/db");
 var path = require("path");
 const fs = require("fs-extra");
 const { v4: uuidv4 } = require("uuid");
-const multer = require("multer");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
@@ -38,16 +37,16 @@ function fileFilter(req, file, cb) {
 const videoUpload = multer({
   storage: videoStorage,
   limits: {
-    fileSize: 10000000, // 10000000 Bytes = 10 MB
+    fileSize: 250000000, // 10000000 Bytes = 10 MB
   },
   fileFilter: fileFilter,
 });
 
 exports.trainingvideo = [
     auth,
+    videoUpload.single("video"),
     body("title").isLength({ min: 1 }).trim().withMessage("title  is required"),
     body("description").isLength({ min: 1 }).trim().withMessage("description  is required"),
-    videoUpload.single("video"),
     async(req,res) =>{
         var fileSize = 25000000;
         var  fileSize = parseInt(req.headers['content-length']);
@@ -69,9 +68,15 @@ exports.trainingvideo = [
                     title: req.body.title,
                     description: req.body.description,
                   };
-                  const uploadVideo = await TrainingvideoModel.create(infoVideo);
+                   const uploadVideo = await VideotrainingModel.create(infoVideo);
+                   infoVideo.video =process.env.VIDEOURL + "public/uploads/" + uploadVideo.video;
+                   return apiResponse.successResponseWithData(res,"Training video  uploaded Sucessfully",infoVideo);
+                 }  else {
+                  return apiResponse.ErrorResponse(res,"please upload only video not other files");
                 }
-        }catch (err) {
+         }catch (err) {
+            console.log(err)
+
             return apiResponse.ErrorResponse(res, err);
           }
   

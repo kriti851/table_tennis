@@ -4,6 +4,7 @@ var chatRouter = require("./chat")
 var userRouter = require("./user");
 var promotionrouter = require("./promotion");
 var traingMangeRouter = require("./traingMange");
+var trainingvideoRouter = require("./trainingvideo");
 var mange_training = require("./mange_training");
 var playervideoRouter = require("./playervideo");
 var teamRouter = require("./team")
@@ -21,6 +22,7 @@ var app = express();
 app.use("/auth/", authRouter);
 app.use("/chat/", chatRouter);
 app.use("/user/", userRouter);
+app.use("/trainingvideo/",trainingvideoRouter);
 app.use("/training/",mange_training);
 app.use("/mange/",traingMangeRouter);
 app.use("/team/",teamRouter);

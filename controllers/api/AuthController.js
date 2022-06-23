@@ -610,7 +610,8 @@ exports.resetPassword = [
         if (user) {
           // if (user.otp == otp) {
           if (req.body.password) {
-            const pass = await bcrypt.hash(req.body.password, 10);
+   
+            const pass= Password.hash(req.body.password);
             const result = await UserModel.update(
               { password: pass },
               { where: { id: user.id } }

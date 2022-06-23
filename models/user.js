@@ -93,10 +93,10 @@ const user = sequelize.define('users', {
         type: Sequelize.STRING,
         allowNull: true
     },
-    // otp: {
-    //     type: Sequelize.STRING,
-    //     allowNull: true
-    // },  
+    otp: {
+        type: Sequelize.STRING,
+        allowNull: true
+    },  
     location: {
         type: Sequelize.STRING,
         allowNull: true
