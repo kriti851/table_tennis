@@ -408,18 +408,23 @@ exports.login = [
     .withMessage("Email must be specified.")
     .isEmail()
     .withMessage("Email must be a valid email address."),
-  body("password")
+    body("password")
     .trim()
-    .isLength({ min: 1 })
-    .withMessage("Password must be specified."),
+    .notEmpty()
+    .withMessage("Password should not be empty")
+    .isStrongPassword({
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+    }),
   async (req, res) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return apiResponse.validationErrorWithData(
           res,
-          "Validation Error.",
-          errors.array()
+          errors.array({ onlyFirstError: false })[0].msg
         );
       } else {
         const { email, password } = req.body;

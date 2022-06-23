@@ -1,6 +1,7 @@
 
 const coachplayerchatModel = require("../../models/coachplayerchat");
 const recentchatModel = require("../../models/coachplayerchat");
+const sequelize = require("../../config/db");
 const apiResponse = require("../../helpers/apiResponse");
 const auth = require("../../middlewares/jwt");
 const { body, validationResult } = require("express-validator");
@@ -10,7 +11,6 @@ exports.sendmessage = [
     body('type').isIn(['image','video','text']).withMessage('Please send valid message type.'),
     async (req, res) => {
     try {
-     
     let message_info = {
         sender_id:req.user.id,
         receiver_id:req.body.receiver_id,
@@ -43,7 +43,7 @@ exports.sendmessage = [
         
         let info = {
             sender_id:req.user.id,
-            receiver_id :req.body.receiver_id,
+            receiver_id : req.body.receiver_id,
             message: req.body.message,
             type: req.body.type,
             messageFrom:"coach"

@@ -175,7 +175,7 @@ exports.info_user = [
   async (req, res) => {
     try {
       var user = await sequelize.query(
-        "SELECT trainingvideos.user_id,users.username,users.email,users.user_type from trainingvideos INNER JOIN users ON trainingvideos.user_id= users.id;",
+        "SELECT shortclips.user_id,users.username,users.email,users.user_type from shortclips INNER JOIN users ON shortclips.user_id= users.id;",
         // "SELECT team_players.team_id, team_players.player_id,users.username,users.mobileNumber,users.email,users.club from team_players  INNER JOIN users ON team_players.player_id= users.id;",
         { type: sequelize.QueryTypes.SELECT }
       );

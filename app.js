@@ -2,6 +2,7 @@ var createError = require('http-errors');
 const sequelize = require('./config/db');
 var express = require('express');
 var path = require('path');
+var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 // const fileUpload = require('express-fileupload');
@@ -23,7 +24,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname,)));
-
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(cors());
 
 sequelize    
@@ -60,3 +62,6 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+
+
