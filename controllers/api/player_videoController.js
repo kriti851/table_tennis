@@ -48,6 +48,14 @@ exports.player_video = [
     .isLength({ min: 1 })
     .withMessage("content  is required"),
   async (req, res) => {
+    var fileSize = 25000000;
+    var  fileSize = parseInt(req.headers['content-length']);
+    if (fileSize > 25000000) {
+     return apiResponse.ErrorResponse(
+      res,
+       "please upload video only less then 30 second"
+      );
+     }
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -71,7 +79,7 @@ exports.player_video = [
         data.video = process.env.VIDEOURL + "public/uploads/" + data.video;
         return apiResponse.successResponseWithData(
           res,
-          "practising video upload Sucessfully by Player",
+          "video uploaded sucessfully",
           data
         );
          }
@@ -102,6 +110,7 @@ exports.plyer_wholelist = [
   async (req, res) => {
     try {
       let getvideo = await practisingvideoModel.findAll({
+        order: [["id", "DESC"]],
         attributes: [
           "id",
           "user_id",
@@ -141,6 +150,7 @@ exports.plyerlist = [
   async (req, res) => {
     try {
       let getvideo = await practisingvideoModel.findAll({
+        order: [["id", "DESC"]],
         attributes: [
           "id",
           "user_id",
@@ -157,6 +167,47 @@ exports.plyerlist = [
           ],
         ],
         where: { user_id: req.user.id },
+      });
+      if (!getvideo.length > 0) {
+        return apiResponse.successResponseWithData(
+          res,
+          "No video uploaded by this user"
+        );
+      }
+      return apiResponse.successResponseWithData(
+        res,
+        "List of player",
+        getvideo
+      );
+    } catch (err) {
+      return apiResponse.ErrorResponse(res, err);
+    }
+  },
+];
+
+
+exports.plyerlist_id = [
+  auth,
+  async (req, res) => {
+    try {
+      let getvideo = await practisingvideoModel.findAll({
+        order: [["id", "DESC"]],
+        attributes: [
+          "id",
+          "user_id",
+          "title",
+          "content",
+          "user_type",
+          "createdat",
+          "updatedat",
+          [
+            sequelize.literal(
+              "CONCAT('" + process.env.IMAGEURL + "public/uploads/" + "',video)"
+            ),
+            "video",
+          ],
+        ],
+        where: {id: req.body.id, user_id: req.user.id },
       });
       if (!getvideo.length > 0) {
         return apiResponse.successResponseWithData(

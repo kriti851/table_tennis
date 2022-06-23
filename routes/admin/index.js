@@ -3,7 +3,7 @@ var authRouter = require("./auth");
 var articlerouter = require("./article");
 var promotionrouter = require("./promotion");
 var userRouter = require("./user");
-var  practisingrouter = require("./practising");
+
 var  subscriptionrouter = require("./subscription");
 var  videorouter = require("./video");
 var apiResponse = require("../../helpers/apiResponse");
@@ -16,7 +16,6 @@ var app = express();
 app.use("/auth/", authRouter);
 app.use("/user/", userRouter);
 app.use("/article/", articlerouter);
-app.use("/practising/", practisingrouter);
 app.use("/adminvideo/", videorouter);
 app.use("/subscription/", subscriptionrouter);
 app.use("/promotion/", promotionrouter);
