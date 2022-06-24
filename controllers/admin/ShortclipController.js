@@ -147,6 +147,95 @@ exports.list = [
     }
   },
 ];
+
+
+
+exports.approvelist = [
+  auth,
+  async (req, res) => {
+    try {
+      const { pageNumber, pageSize, q } = req.body;
+
+      if (pageNumber && pageSize) {
+        limit = parseInt(pageSize);
+        offset = limit * (pageNumber - 1);
+      } else {
+        limit = parseInt(10);
+        offset = limit * (1 - 1);
+      }
+      if (q) {
+        var search = {};
+        search[Op.or] = {
+          title: { [Op.substring]: q.trim() },
+          description: { [Op.substring]: q.trim() },
+        };
+      }
+      // var approve = req.body.approve;
+      // console.log(approve, "dffffffffffff");
+      // if (1 == approve) {
+        const { count, rows: user } = await TrainingvideoModel.findAndCountAll({
+          offset,
+          limit,
+          attributes: [
+            "id",
+            "user_id",
+            "approve",
+            "disable",
+            "title",
+            "description",
+            "createdat",
+            "updatedat",
+            [
+              sequelize.literal(
+                "CONCAT('" +
+                  process.env.VIDEOURL +
+                  "public/uploads/" +
+                  "',video)"
+              ),
+              "video",
+            ],
+          ],
+
+          // where: {
+          //   approve: "1",
+
+          //   ...search,
+          // },
+
+
+          where: {
+            ...search,
+            [Op.and]: [
+                { approve:"1"},
+                { disable:"0"},
+                
+          ]}
+        });
+
+        let next_page = false;
+        if (offset + limit < count) {
+          next_page = true;
+        }
+        if (!user) {
+          return apiResponse.ErrorResponse(res, "Something went wrong", user);
+        }
+        return apiResponse.successResponseWithData(
+          res,
+          "Successfully retrieve information of uploaded video",
+          { user, count, next_page }
+        );
+      
+    } catch (err) {
+      console.log(err);
+      return apiResponse.ErrorResponse(res, err);
+    }
+  },
+];
+
+
+
+
+
 exports.list_history = [
   auth,
   async (req, res) => {

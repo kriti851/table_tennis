@@ -408,16 +408,7 @@ exports.login = [
     .withMessage("Email must be specified.")
     .isEmail()
     .withMessage("Email must be a valid email address."),
-    body("password")
-    .trim()
-    .notEmpty()
-    .withMessage("Password should not be empty")
-    .isStrongPassword({
-      minLength: 8,
-      minLowercase: 1,
-      minUppercase: 1,
-      minNumbers: 1,
-    }),
+
   async (req, res) => {
     try {
       const errors = validationResult(req);

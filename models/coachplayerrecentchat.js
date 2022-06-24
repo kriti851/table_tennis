@@ -9,10 +9,6 @@ const coachplayerrecentchat = sequelize.define("coachplayerrecentchats", {
     autoIncrement: true,
   },
 
-  user_id: {
-    type: Sequelize.NUMBER,
-    allowNull: true,
-  },
   message: {
     type: Sequelize.STRING,
     allowNull: true,
@@ -27,11 +23,11 @@ const coachplayerrecentchat = sequelize.define("coachplayerrecentchats", {
     defaultValue: "text",
   },
   coachUnreadCount: {
-    type: DataTypes.INTEGER,
+    type: Sequelize.INTEGER,
     defaultValue: 0,
   },
   playerUnreadCount: {
-    type: DataTypes.INTEGER,
+    type: Sequelize.INTEGER,
     defaultValue: 0,
   },
 },{

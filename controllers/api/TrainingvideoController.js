@@ -84,4 +84,43 @@ exports.trainingvideo = [
     }
 ]
 
+exports.list = [
+    auth,
+    async (req, res) => {
+      try {
+        let getvideo = await VideotrainingModel.findAll({
+          order: [["id", "DESC"]],
+          attributes: [
+            "id",
+            "user_id",
+            "title",
+            "description",
+            "createdat",
+            "updatedat",
+            [
+              sequelize.literal(
+                "CONCAT('" + process.env.IMAGEURL + "public/uploads/" + "',video)"
+              ),
+              "video",
+            ],
+          ],
+          where: { user_id: req.user.id },
+        });
+        if (!getvideo.length) {
+          return apiResponse.successResponseWithData(
+            res,
+            "No video uploaded by this user"
+          );
+        }
+        return apiResponse.successResponseWithData(
+          res,
+          "List of player",
+          getvideo
+        );
+      } catch (err) {
+        return apiResponse.ErrorResponse(res, err);
+      }
+    },
+  ];
+
 

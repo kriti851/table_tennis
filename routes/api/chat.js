@@ -6,6 +6,8 @@ var router = express.Router();
 router.post("/playersendmessage", CoachplayerchatController.sendmessage);
 
 router.post("/coachsendmessage", CoachplayerchatController.coachsendmessage);
+router.post("/recentmessage", CoachplayerchatController.recentChat);
+
 
 
 

@@ -1,6 +1,4 @@
-
 const CountryModel = require("../../models/country");
-
 const apiResponse = require("../../helpers/apiResponse");
 exports.GetCountry = [
     async (req, res) => {

@@ -1,5 +1,6 @@
 const ArticleModel = require("../../models/article");
 const apiResponse = require("../../helpers/apiResponse");
+const sequelize = require("../../config/db");
 const { Op } = require("sequelize");
 const auth = require("../../middlewares/jwt");
 
