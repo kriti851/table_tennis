@@ -62,51 +62,93 @@ const profileUpload = multer({
         }
       },
     ];
-    exports.update = [
-      auth,
-      check("name")
-    .trim()
-    .notEmpty()
-    .withMessage("Name is Required")
-    .isAlpha("en-US", { ignore: " " })
-    .withMessage("Must be only alphabetical chars"),
-  check("username")
-    .trim()
-    .notEmpty()
-    .withMessage("Username is Required")
-    .isAlpha("en-US", { ignore: " " })
-    .withMessage("Must be only alphabetical chars"),
-      body("email")
+  exports.update = [
+    auth,
+    body("name")
+        .trim(),
+        // .notEmpty()
+        // .withMessage("Name is Required")
+        // .isAlpha("en-US", { ignore: " " })
+        // .withMessage("Must be only alphabetical chars"),
+    body("username")
+        .trim(),
+        // .notEmpty()
+        // .withMessage("Username is Required")
+        // .isAlpha("en-US", { ignore: " " })
+        // .withMessage("Must be only alphabetical chars"),
+    body("gender")
+        .trim(),
+        // .notEmpty()
+        // .isLength({ min: 1 })
+        // .withMessage("Gender is required."),
+    body("dob")
+        .trim(),
+    body("email")
         .trim()
         .isLength({ min: 1 })
         .withMessage("Email must be specified.")
         .isEmail()
-        .withMessage("Email must be a valid email address.")
-        .custom(async (value, { req }) => {
-          // console.log('auth=',req.user.id)
-          const user = await UserModel.findOne({ where: { email: value } });
-          if (user && user.id != req.user.id) {
-            return Promise.reject("E-mail already in use");
-          }
-        }),
-    
-      body("password").custom((value, { req }) => {
-        if (value) {
-          if (value.length < 6) {
-            throw new Error("New Password must be 6 characters or greater.");
-          }
-          if (!req.body.old_password) {
-            throw new Error(
-              "Old  password is required and must be 6 characters or greater."
-            );
-          }
-          if (req.body.confirm_password !== req.body.password) {
-            throw new Error("Password confirmation does not match password");
-          }
-        }
-        // Indicates the success of this synchronous custom validator
-        return true;
-      }),
+        .withMessage("Email must be a valid email address."),
+    // .custom(async (value, { req }) => {
+    //       const user = await UserModel.findOne({ where: { email: value } });
+    //       if (user && user.id != req.user.id) {
+    //         return Promise.reject("E-mail already in use");
+    //       }
+    //     }),
+    body("nationality")
+        .trim()
+        .isAlpha()
+        .withMessage("Nationality Must be only alphabetical chars"),
+    body("achievements").trim(),
+    body("career").trim(),
+    body("phone")
+        .trim()
+        .isNumeric()
+        .withMessage("Phone Number Must be Numeric")
+        .isLength({ min: 10, max: 10 })
+        .withMessage("Phone Number Must be at least 10 Number"),
+    body("hand")
+        .trim(),
+    body("playing_style")
+        .trim(),
+    body("grip")
+        .trim(),
+    body("team")
+        .trim(),
+    body("club").trim(),
+    body("favorite_serve")
+        .trim(),
+    body("awards")
+        .trim(),
+    body("tournament_played")
+        .trim(),
+    body("street_address1")
+        .trim(),
+    body("street_address2")
+       .trim(),
+    body("zip_code")
+       .trim()
+       .isNumeric()
+       .withMessage("Zip Code Must be only Numeric")
+       .isLength({ min: 4, max: 6 })
+       .withMessage("Zip Code Must Contain 5 Digits"),
+    //  body("password").custom((value, { req }) => {
+    //     if (value) {
+    //       if (value.length < 6) {
+    //         throw new Error("New Password must be 6 characters or greater.");
+    //       }
+    //       if (!req.body.old_password) {
+    //         throw new Error(
+    //           "Old  password is required and must be 6 characters or greater."
+    //         );
+    //       }
+    //       if (req.body.confirm_password !== req.body.password) {
+    //         throw new Error("Password confirmation does not match password");
+    //       }
+    //     }
+    //     // Indicates the success of this synchronous custom validator
+    //     return true;
+    //   }),
       body("name").escape(),
       body("username").escape(),
       async (req, res) => {
@@ -123,6 +165,9 @@ const profileUpload = multer({
               username,
               email,
               phone,
+              gender,
+              street_address1,
+              street_address2,
               playing_style,
               career,
               nationality,
@@ -132,11 +177,12 @@ const profileUpload = multer({
               hand,
               location,
               achievements,
-              expiry_month,
-              expiry_year,
-              card_no,
+            //   expiry_month,
+            //   expiry_year,
+            //   card_no,
               zip_code,
               awards,
+              tournament_played,
               favorite_serve,
             } = req.body;
             const user = await UserModel.findOne({ where: { id: req.user.id } });
@@ -146,6 +192,9 @@ const profileUpload = multer({
                 email: email,
                 username: username,
                 phone: phone,
+                gender:gender,
+                street_address1:street_address1,
+                street_address2:street_address2,
                 playing_style: playing_style,
                 team: team,
                 club: club,
@@ -155,24 +204,14 @@ const profileUpload = multer({
                 hand: hand,
                 location: location,
                 achievements: achievements,
-                expiry_month: expiry_month,
-                expiry_year: expiry_year,
-                card_no: card_no,
+                tournament_played:tournament_played,
+                // expiry_month: expiry_month,
+                // expiry_year: expiry_year,
+                // card_no: card_no,
                 zip_code: zip_code,
                 awards: awards,
                 favorite_serve: favorite_serve,
-              };
-              if (req.body.password) {
-                const isMatch = await bcrypt.compare(
-                  req.body.old_password,
-                  user.password
-                );
-                if (!isMatch) {
-                  return apiResponse.ErrorResponse(res, "Incorrect old password!");
-                }
-                const pass = await bcrypt.hash(req.body.password, 10);
-                userData.password = pass;
-              }
+              };  
               const result = await UserModel.update(userData, {
                 where: { id: req.user.id },
               });
@@ -182,10 +221,10 @@ const profileUpload = multer({
                   "Something went wrong!"
                 );
               }
-              return apiResponse.successResponse(
-                res,
-                "User updated successfully.",
-                user
+              return apiResponse.successResponseWithData(
+                 res,
+                "Profile updated successfully.",
+                 userData
               );
             } else {
               return apiResponse.unauthorizedResponse(
@@ -200,7 +239,7 @@ const profileUpload = multer({
         }
       },
     ];
-    
+  
     
 
 //Update Profile

@@ -69,15 +69,15 @@ exports.add = [
     .trim(),
   body("team_notification")
     .trim(),
-  body("post")
-    .trim()
-    .notEmpty()
-    .withMessage("post is Required")
-    .isAlpha("en-US", { ignore: " " })
-    .withMessage("Must be only alphabetical chars"),
+//   body("post")
+//     .trim()
+//     .notEmpty()
+//     .withMessage("post is Required")
+//     .isAlpha("en-US", { ignore: " " })
+//     .withMessage("Must be only alphabetical chars"),
   async (req, res) => {
     try {
-      const errors = validationResult(req);
+      var errors = validationResult(req);
       if (!errors.isEmpty()) {
         return apiResponse.validationErrorWithData(
           res,
@@ -90,7 +90,10 @@ exports.add = [
           created_by: req.user.id,
           team_name: req.body.team_name,
           location: req.body.location,
-          post:req.body.post,
+          team_activity:req.body.team_activity,
+          who_can_post:req.body.who_can_post,
+          invite:req.body.invite,
+          team_notification:req.body.team_notification,
           image: "default.png",
         };
         const team = await teamModel.create(info, (user_type = "coach"));
@@ -107,7 +110,10 @@ exports.add = [
           created_by: req.user.id,
           team_name: req.body.team_name,
           location: req.body.location,
-          post:req.body.post,
+          team_activity:req.body.team_activity,
+          who_can_post:req.body.who_can_post,
+          invite:req.body.invite,
+          team_notification:req.body.team_notification,
           image: req.file.filename,
         };
         const team = await teamModel.create(info);

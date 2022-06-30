@@ -1,13 +1,15 @@
-const coachplayerchatModel = require("../../models/coachplayerchat");
-const recentchatModel = require("../../models/coachplayerrecentchat");
+const userplayerchatModel = require("../../models/userplayerchat");
+const userplayerrecentchatModel = require("../../models/userplayerrecentchat");
 const sequelize = require("../../config/db");
 const apiResponse = require("../../helpers/apiResponse");
 const auth = require("../../middlewares/jwt");
-const { body, validationResult,check } = require("express-validator");
+const { body, validationResult,check} = require("express-validator");
 const fileUpload = require("express-fileupload");
 var filemidlleware = fileUpload();
 const path = require("path");
-exports.playersendmessage = [
+
+
+exports.sendmessage = [
   auth,
   filemidlleware,
   check("receiver_id")
@@ -78,7 +80,7 @@ exports.playersendmessage = [
           errors.array({ onlyFirstError: false })[0].msg
         );
       }
-      var recentChat = await recentchatModel.findOne({
+      var recentChat = await userplayerrecentchatModel.findOne({
         where: {
           sender_id: req.user.id,
         },
@@ -88,19 +90,19 @@ exports.playersendmessage = [
         recentChat.type = req.body.type;
         recentChat.receiver_id = req.body.receiver_id;
         recentChat.messageFrom = "player";
-        recentChat.coachUnreadCount = recentChat.coachUnreadCount + 1;
+        recentChat.userUnreadCount = recentChat.userUnreadCount + 1;
         await recentChat.save();
       } else {
-        await recentchatModel.create({
+        await userplayerrecentchatModel.create({
           sender_id: req.user.id,
           receiver_id: req.body.receiver_id,
           message: req.body.message,
           type: req.body.type,
           messageFrom: "player",
-          coachUnreadCount: 1,
+          userUnreadCount: 1,
         });
       }
-      var chat = await coachplayerchatModel.create({
+      var chat = await userplayerchatModel.create({
         sender_id: req.user.id,
         receiver_id: req.body.receiver_id,
         message: req.body.message,
@@ -125,7 +127,7 @@ exports.playersendmessage = [
   },
 ];
 
-exports.coachsendmessage = [
+exports.usersendmessage = [
   auth,
   filemidlleware,
   body("type")
@@ -189,7 +191,7 @@ exports.coachsendmessage = [
           errors.array({ onlyFirstError: false })[0].msg
         );
       }
-      var recentChat = await recentchatModel.findOne({
+      var recentChat = await userplayerrecentchatModel.findOne({
         where: {
           sender_id: req.user.id,
         },
@@ -198,25 +200,25 @@ exports.coachsendmessage = [
         recentChat.message = req.body.message;
         recentChat.type = req.body.type;
         recentChat.receiver_id = req.body.receiver_id;
-        recentChat.messageFrom = "coach";
+        recentChat.messageFrom = "user";
         recentChat.playerUnreadCount = recentChat.playerUnreadCount + 1;
         await recentChat.save();
       } else {
-        await recentchatModel.create({
+        await userplayerrecentchatModel.create({
           sender_id: req.user.id,
           receiver_id: req.body.receiver_id,
           message: req.body.message,
           type: req.body.type,
-          messageFrom: "coach",
+          messageFrom: "user",
           playerUnreadCount: 1,
         });
       }
-      var chat = await coachplayerchatModel.create({
+      var chat = await userplayerchatModel.create({
         sender_id: req.user.id,
         receiver_id: req.body.receiver_id,
         message: req.body.message,
         type: req.body.type,
-        messageFrom: "coach",
+        messageFrom: "user",
       });
       if (req.body.type == "image" || req.body.type == "video") {
         var chat = JSON.parse(JSON.stringify(chat));
@@ -226,7 +228,7 @@ exports.coachsendmessage = [
 
       return apiResponse.successResponseWithData(
         res,
-        "player send message sucessfully",
+        "User send message sucessfully",
         chat
       );
     } catch (err) {
@@ -258,107 +260,5 @@ exports. getchat = [
 
 
 
-
-
-
-
-
-exports.GetcoachChatlist=[
-auth,
-async (req,res)=>{
-    try{
-        var recentChat = await recentchatModel.findOne({where:{sender_id:req.user.id}});
-        if(recentChat){
-            recentChat.playerUnreadCount=0;
-            await recentChat.save();
-        }
-        var  limit = 10;
-        var offest = 0;  
-        if(typeof req.query.page !='undefined' && req.query.page>1){
-            offest=((req.query.page-1)*limit);
-        }  
-        var totalRecords = await coachplayerchatModel.count({where:{sender_id:req.user.id}});
-        var next_page=false;
-        if((offest+limit)<totalRecords){
-            next_page=true;
-        }
-        var records = await coachplayerchatModel.findAll({
-            attributes:[
-                'id','sender_id','receiver_id','type','messageFrom','createdAt','updatedAt',
-                [sequelize.literal("IF(type='image' || type='video',CONCAT('" + process.env.IMAGEURL + "',message),message)"),"message"]
-            ],
-            where:{sender_id:req.user.id},
-            order: [
-              ['id', 'DESC'], 
-          ],
-            limit:limit,
-            offset:offest
-        });
-        if(records.length){
-        return apiResponse.successResponseWithData( res,"sucessfully reterive the informatiom",
-                { records,count:totalRecords,nextPage:next_page }
-              );
-        }else{
-            return apiResponse.successResponseWithData( res,"something went wrong",
-            { records,count:totalRecords,nextPage:false }
-          );
-        }
-    } catch (err) {
-        console.log(err)
-        return apiResponse.ErrorResponse(res, err);
-      
-      }
-}];
-
-
-exports.GetplayerChatlist=[
-  auth,
-  async (req,res)=>{
-      try{
-          var recentChat = await recentchatModel.findOne({where:{sender_id:req.user.id}});
-          if(recentChat){
-              recentChat.coachUnreadCount=0;
-              await recentChat.save();
-          }
-          var  limit = 10;
-          var offest = 0;  
-          if(typeof req.query.page !='undefined' && req.query.page>1){
-              offest=((req.query.page-1)*limit);
-          }  
-          var totalRecords = await coachplayerchatModel.count({where:{sender_id:req.user.id}});
-          var next_page=false;
-          if((offest+limit)<totalRecords){
-              next_page=true;
-          }
-          var records = await coachplayerchatModel.findAll({
-              attributes:[
-                  'id','sender_id','receiver_id','type','messageFrom','createdAt','updatedAt',
-                  [sequelize.literal("IF(type='image' || type='video',CONCAT('" + process.env.IMAGEURL + "',message),message)"),"message"]
-              ],
-              where:{sender_id:req.user.id},
-              order: [
-                ['id', 'DESC'], 
-            ],
-              limit:limit,
-              offset:offest
-          });
-          if(records.length){
-          return apiResponse.successResponseWithData( res,"sucessfully reterive the informatiom",
-                  { records,count:totalRecords,nextPage:next_page }
-                );
-          }else{
-              return apiResponse.successResponseWithData( res,"something went wrong",
-              { records,count:totalRecords,nextPage:false }
-            );
-          }
-      } catch (err) {
-          console.log(err)
-          return apiResponse.ErrorResponse(res, err);
-        
-        }
-  }];
   
-
-
-
 
