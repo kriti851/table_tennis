@@ -1,8 +1,8 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../config/db");
 
-const review = sequelize.define(
-  "reviews",
+const player_review = sequelize.define(
+  "player_reviews",
   {
     id: {
       type: Sequelize.NUMBER,
@@ -40,4 +40,4 @@ const review = sequelize.define(
   }
 );
 
-module.exports = review;
+module.exports = player_review;

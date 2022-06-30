@@ -1,4 +1,4 @@
-const reviewModel = require("../../models/review");
+const reviewModel = require("../../models/player_review");
 const coachreviewModel = require("../../models/coach_review");
 const sequelize = require("../../config/db");
 const apiResponse = require("../../helpers/apiResponse");
@@ -30,7 +30,7 @@ module.exports.review =  [
                 reviews.description = body.description
                 await reviews.save();
 
-                var avg = await sequelize.query("SELECT description,player_id, AVG(rating) as ratingAvg,count(*) as totalReviewers from reviews INNER JOIN users ON users.id=reviews.user_id  WHERE player_id = " + body.player_id + " group by description","player_id", { type: sequelize.QueryTypes.SELECT })
+                var avg = await sequelize.query("SELECT description,player_id, AVG(rating) as ratingAvg,count(*) as totalReviewers from player_reviews INNER JOIN users ON users.id=player_reviews.user_id  WHERE player_id = " + body.player_id + " group by description","player_id", { type: sequelize.QueryTypes.SELECT })
 
                 return apiResponse.successResponseWithData(
                     res,
@@ -45,7 +45,7 @@ module.exports.review =  [
                     description: body.description 
           
                 });
-                var avg = await sequelize.query("SELECT description,player_id AVG(rating) as ratingAvg,count(*) as totalReviewers from reviews INNER JOIN users ON users.id=reviews.user_id  WHERE player_id = " + body.player_id + " group by description","player_id", { type: sequelize.QueryTypes.SELECT })
+                var avg = await sequelize.query("SELECT description,player_id, AVG(rating) as ratingAvg,count(*) as totalReviewers from player_reviews INNER JOIN users ON users.id=player_reviews.user_id  WHERE player_id = " + body.player_id + " group by description","player_id", { type: sequelize.QueryTypes.SELECT })
 
                 return apiResponse.successResponseWithData(
                     res,

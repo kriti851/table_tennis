@@ -1,7 +1,7 @@
 var express = require("express");
 var authRouter = require("./auth");
 var chatRouter = require("./chat")
-var reviewRouter = require("./review")
+var reviewRouter = require("./player_review")
 var payeruserchatRouter = require("./playeruserchat")
 var userRouter = require("./user");
 var promotionrouter = require("./promotion");
@@ -17,8 +17,6 @@ var articlerouter = require("./article");
 var languageRouter = require("./language");
 var postRouter = require("./post");
 var apiResponse = require("../../helpers/apiResponse");
-
-const language = require("../../models/language");
 var app = express();
 
 // app.get("/", function(req, res) {

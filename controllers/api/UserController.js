@@ -241,11 +241,6 @@ const profileUpload = multer({
       },
     ];
   
-    
-
-//Update Profile
-
-//Change Password
 exports.changePassword = [
     auth,
     body("old_password")
