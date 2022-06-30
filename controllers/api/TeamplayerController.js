@@ -22,16 +22,12 @@ exports.addplayer = [
                  player_id: req.body.player_id,
        
 
-            }
-            
+            }       
             console.log(player_info,'sddddddddddddd')
             const team = await team_playerModel.create(player_info)
             return apiResponse.successResponseWithData(res, "player added by coach Sucessfully",team);
-        
-
 
     }
-
         catch (err) {
             console.log(err);
             const errorInfo = {
