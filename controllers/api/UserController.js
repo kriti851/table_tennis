@@ -62,6 +62,7 @@ const profileUpload = multer({
         }
       },
     ];
+    
   exports.update = [
     auth,
     body("name")

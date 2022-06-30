@@ -71,7 +71,7 @@ exports.uploadvideo = [
       } else {
         return apiResponse.ErrorResponse(
           res,
-          "please upload only video not other files"
+          "Please upload only video not other files"
         );
       }
     } catch (err) {
@@ -146,7 +146,6 @@ exports.list = [
 
 exports.list_history = [
   auth,
-
   async (req, res) => {
     try {
       const user = await PromotionvideoModel.findAll({
@@ -224,11 +223,9 @@ exports.deleteVideo = [
       const data = await PromotionvideoModel.destroy({
         where: { id: req.body.id },
       });
-
       if (!data) {
         return apiResponse.successResponseWithData(res, "No video found", data);
       }
-
       return apiResponse.successResponseWithData(
         res,
         "video deleted sucessfully",
@@ -239,3 +236,4 @@ exports.deleteVideo = [
     }
   },
 ];
+
