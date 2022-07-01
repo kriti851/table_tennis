@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../config/db");
 
-const coachplayerrecentchat = sequelize.define("coachplayerrecentchats", {
+const userplayerrecentchat = sequelize.define("userplayerrecentchats", {
   id: {
     type: Sequelize.NUMBER,
     allowNull: false,
@@ -24,15 +24,15 @@ const coachplayerrecentchat = sequelize.define("coachplayerrecentchats", {
     allowNull: true,
   },
   messageFrom: {
-    type: Sequelize.ENUM(["player", "coach"]),
-    defaultValue: "player",
+    type: Sequelize.ENUM(["player", "user"]),
+    defaultValue: "user",
   },
 
   type: {
     type: Sequelize.ENUM(["text", "image", "video"]),
     defaultValue: "text",
   },
-  coachUnreadCount: {
+  userUnreadCount: {
     type: Sequelize.INTEGER,
     defaultValue: 0,
   },
@@ -45,4 +45,4 @@ const coachplayerrecentchat = sequelize.define("coachplayerrecentchats", {
  
  }); 
 
-module.exports = coachplayerrecentchat;
+module.exports = userplayerrecentchat;

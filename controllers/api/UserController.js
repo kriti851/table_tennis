@@ -43,7 +43,7 @@ const profileUpload = multer({
     });
 
 
-    exports.detail = [
+exports.detail = [
       auth,
       async (req, res) => {
         try {
@@ -62,164 +62,174 @@ const profileUpload = multer({
         }
       },
     ];
-    exports.update = [
-      auth,
-      body("name")
-          .trim(),
-          // .notEmpty()
-          // .withMessage("Name is Required")
-          // .isAlpha("en-US", { ignore: " " })
-          // .withMessage("Must be only alphabetical chars"),
-      body("username")
-          .trim(),
-          // .notEmpty()
-          // .withMessage("Username is Required")
-          // .isAlpha("en-US", { ignore: " " })
-          // .withMessage("Must be only alphabetical chars"),
-      body("gender")
-          .trim(),
-          // .notEmpty()
-          // .isLength({ min: 1 })
-          // .withMessage("Gender is required."),
-      body("dob")
-          .trim(),
-      body("email")
-          .trim()
-          .isLength({ min: 1 })
-          .withMessage("Email must be specified.")
-          .isEmail()
-          .withMessage("Email must be a valid email address."),
-      // .custom(async (value, { req }) => {
-      //       const user = await UserModel.findOne({ where: { email: value } });
-      //       if (user && user.id != req.user.id) {
-      //         return Promise.reject("E-mail already in use");
-      //       }
-      //     }),
-      body("nationality")
-          .trim(),
-          // .isAlpha()
-          // .withMessage("Nationality Must be only alphabetical chars"),
-      body("achievements").trim(),
-      body("career").trim(),
-      body("phone")
-          .trim(),
-          // .isNumeric()
-          // .withMessage("Phone Number Must be Numeric")
-          // .isLength({ min: 10, max: 10 })
-          // .withMessage("Phone Number Must be at least 10 Number"),
-      body("hand")
-          .trim(),
-      body("playing_style")
-          .trim(),
-      body("grip")
-          .trim(),
-      body("team")
-          .trim(),
-      body("club").trim(),
-      body("favorite_serve")
-          .trim(),
-      body("awards")
-          .trim(),
-      body("tournament_played")
-          .trim(),
-      body("street_address1")
-          .trim(),
-      body("street_address2")
-         .trim(),
-      body("zip_code")
-         .trim(),
-      body("name").escape(),
-      body("username").escape(),
-        async (req, res) => {
-          try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return apiResponse.validationErrorWithData(
-                  res,
-                  errors.array({ onlyFirstError: false })[0].msg
-                );
-            } else {
-              const {
-                name,
-                username,
-                email,
-                phone,
-                gender,
-                street_address1,
-                street_address2,
-                playing_style,
-                career,
-                nationality,
-                team,
-                club,
-                grip,
-                hand,
-                location,
-                achievements,
-              //   expiry_month,
-              //   expiry_year,
-              //   card_no,
-                zip_code,
-                awards,
-                tournament_played,
-                favorite_serve,
-              } = req.body;
-              const user = await UserModel.findOne({ where: { id: req.user.id } });
-              if (user) {
-                let userData = {
-                  name: name,
-                  email: email,
-                  username: username,
-                  phone: phone,
-                  gender:gender,
-                  street_address1:street_address1,
-                  street_address2:street_address2,
-                  playing_style: playing_style,
-                  team: team,
-                  club: club,
-                  career: career,
-                  grip: grip,
-                  nationality: nationality,
-                  hand: hand,
-                  location: location,
-                  achievements: achievements,
-                  tournament_played:tournament_played,
-                  // expiry_month: expiry_month,
-                  // expiry_year: expiry_year,
-                  // card_no: card_no,
-                  zip_code: zip_code,
-                  awards: awards,
-                  favorite_serve: favorite_serve,
-                };
-                const result = await UserModel.update(userData, {
-                  where: { id: req.user.id },
-                });
-                if (!result) {
-                  return apiResponse.unauthorizedResponse(
-                    res,
-                    "Something went wrong!"
-                  );
-                }
-                return apiResponse.successResponseWithData(
-                   res,
-                  "Profile updated successfully.",
-                   userData
-                );
-              } else {
-                return apiResponse.unauthorizedResponse(
-                  res,
-                  "No authorization token was found."
-                );
-              }
+
+exports.update = [
+    auth,
+    body("name")
+        .trim(),
+        // .notEmpty()
+        // .withMessage("Name is Required")
+        // .isAlpha("en-US", { ignore: " " })
+        // .withMessage("Must be only alphabetical chars"),
+    body("username")
+        .trim(),
+        // .notEmpty()
+        // .withMessage("Username is Required")
+        // .isAlpha("en-US", { ignore: " " })
+        // .withMessage("Must be only alphabetical chars"),
+    body("gender")
+        .trim(),
+        // .notEmpty()
+        // .isLength({ min: 1 })
+        // .withMessage("Gender is required."),
+    body("dob")
+        .trim(),
+    body("email")
+        .trim()
+        .isLength({ min: 1 })
+        .withMessage("Email must be specified.")
+        .isEmail()
+        .withMessage("Email must be a valid email address."),
+    // .custom(async (value, { req }) => {
+    //       const user = await UserModel.findOne({ where: { email: value } });
+    //       if (user && user.id != req.user.id) {
+    //         return Promise.reject("E-mail already in use");
+    //       }
+    //     }),
+    body("nationality")
+        .trim(),
+        // .isAlpha()
+        // .withMessage("Nationality Must be only alphabetical chars"),
+    body("achievements").trim(),
+    body("career").trim(),
+    body("phone")
+        .trim(),
+        // .isNumeric()
+        // .withMessage("Phone Number Must be Numeric")
+        // .isLength({ min: 10, max: 10 })
+        // .withMessage("Phone Number Must be at least 10 Number"),
+    body("hand")
+        .trim(),
+    body("playing_style")
+        .trim(),
+    body("grip")
+        .trim(),
+    body("team")
+        .trim(),
+    body("club").trim(),
+    body("favorite_serve")
+        .trim(),
+    body("awards")
+        .trim(),
+    body("tournament_played")
+        .trim(),
+    body("street_address1")
+        .trim(),
+    body("street_address2")
+        .trim(),
+    body("zip_code")
+        .trim(),
+    body("name").escape(),
+    body("username").escape(),
+    async (req, res) => {
+      try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return apiResponse.validationErrorWithData(
+              res,
+              errors.array({ onlyFirstError: false })[0].msg
+            );
+        } else {
+          const {
+            name,
+            username,
+            email,
+            phone,
+            gender,
+            street_address1,
+            street_address2,
+            playing_style,
+            career,
+            nationality,
+            team,
+            club,
+            grip,
+            hand,
+            location,
+            achievements,
+          //   expiry_month,
+          //   expiry_year,
+          //   card_no,
+            zip_code,
+            awards,
+            tournament_played,
+            favorite_serve,
+          } = req.body;
+          const user = await UserModel.findOne({ where: { id: req.user.id } });
+          if (user) {
+            let userData = {
+              name: name,
+              email: email,
+              username: username,
+              phone: phone,
+              gender:gender,
+              street_address1:street_address1,
+              street_address2:street_address2,
+              playing_style: playing_style,
+              team: team,
+              club: club,
+              career: career,
+              grip: grip,
+              nationality: nationality,
+              hand: hand,
+              location: location,
+              achievements: achievements,
+              tournament_played:tournament_played,
+              // expiry_month: expiry_month,
+              // expiry_year: expiry_year,
+              // card_no: card_no,
+              zip_code: zip_code,
+              awards: awards,
+              favorite_serve: favorite_serve,
+            };
+          //   if (req.body.password) {
+          //     const isMatch = await bcrypt.compare(
+          //       req.body.old_password,
+          //       user.password
+          //     );
+          //     if (!isMatch) {
+          //       return apiResponse.ErrorResponse(res, "Incorrect old password!");
+          //     }
+          //     const pass = await bcrypt.hash(req.body.password, 10);
+          //     userData.password = pass;
+          //   }
+            const result = await UserModel.update(userData, {
+              where: { id: req.user.id },
+            });
+            if (!result) {
+              return apiResponse.unauthorizedResponse(
+                res,
+                "Something went wrong!"
+              );
             }
-          } catch (err) {
-            console.log(err);
-            return apiResponse.ErrorResponse(res, err);
+            return apiResponse.successResponseWithData(
+                res,
+              "Profile updated successfully.",
+                userData
+            );
+          } else {
+            return apiResponse.unauthorizedResponse(
+              res,
+              "No authorization token was found."
+            );
           }
-        },
-      ];
-    
-//Change Password
+        }
+      } catch (err) {
+        console.log(err);
+        return apiResponse.ErrorResponse(res, err);
+      }
+    },
+    ];
 exports.changePassword = [
     auth,
     body("old_password")

@@ -112,9 +112,9 @@ exports.training_update = [
     try {
       var errors = validationResult(req);
       if (errors.isEmpty()) {
-        // if (!req.files || Object.keys(req.files).length === 0) {
-        //   return res.status(400).send('No files were uploaded.');
-        // }
+        if (!req.files || Object.keys(req.files).length === 0) {
+          return res.status(400).send('No files were uploaded.');
+        }
         const file = req.files.image;
         console.log(file);
         const video = req.files.video;

@@ -1,6 +1,8 @@
 var express = require("express");
 var authRouter = require("./auth");
 var chatRouter = require("./chat")
+var reviewRouter = require("./player_review")
+var payeruserchatRouter = require("./playeruserchat")
 var userRouter = require("./user");
 var promotionrouter = require("./promotion");
 var traingMangeRouter = require("./traingMange");
@@ -14,10 +16,7 @@ var shortclipRouter =require("./shortclip")
 var articlerouter = require("./article");
 var languageRouter = require("./language");
 var postRouter = require("./post");
-
 var apiResponse = require("../../helpers/apiResponse");
-
-const language = require("../../models/language");
 var app = express();
 
 // app.get("/", function(req, res) {
@@ -26,6 +25,10 @@ var app = express();
 
 app.use("/auth/", authRouter);
 app.use("/chat/", chatRouter);
+app.use("/review/", reviewRouter);
+app.use("post/" , postRouter);
+app.use("/language/" , languageRouter);
+app.use("/message/", payeruserchatRouter);
 app.use("/user/", userRouter);
 app.use("/trainingvideo/",trainingvideoRouter);
 app.use("/training/",mange_training);

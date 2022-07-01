@@ -1,8 +1,8 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../config/db");
 
-const coachplayerchat = sequelize.define(
-  "coachplayerchats",
+const usercoachchat = sequelize.define(
+  "usercoachchats",
   {
     id: {
       type: Sequelize.NUMBER,
@@ -25,15 +25,10 @@ const coachplayerchat = sequelize.define(
       type: Sequelize.STRING,
       allowNull: true,
     },
-    recentChatId:{
-      type: Sequelize.NUMBER,
-      allowNull: true,
-
-    },
 
     messageFrom: {
-      type: Sequelize.ENUM(["player", "coach"]),
-      defaultValue: "player",
+      type: Sequelize.ENUM(["coach", "user"]),
+      defaultValue: "coach",
     },
 
     type: {
@@ -46,4 +41,4 @@ const coachplayerchat = sequelize.define(
   }
 );
 
-module.exports = coachplayerchat;
+module.exports = usercoachchat;
