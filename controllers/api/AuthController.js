@@ -439,12 +439,14 @@ exports.login = [
             dob: user.dob,
             gender: user.gender,
             user_type: user.user_type,
+            default_lang:user.default_lang,
           };
           // user matched!
           const secretKey = process.env.JWT_SECRET || "";
           userData.token = jwt.sign({ id: user.id.toString() }, secretKey, {
-            expiresIn: process.env.JWT_TIMEOUT_DURATION,
+          expiresIn: process.env.JWT_TIMEOUT_DURATION,
           });
+
           return apiResponse.successResponseWithData(
             res,
             "LoggedIn Successfully.",

@@ -77,9 +77,7 @@ exports.add = [
           image: req.file.filename
 
         }
-
         const articlefile = await ArticleModel.create(info)
-
         info.image = articlefile.image ? process.env.IMAGEURL + 'public/uploads/' + articlefile.image : process.env.IMAGEURL + 'public/uploads/default.png';
         return apiResponse.successResponseWithData(res, "Article Added  Sucessfully", info);
 

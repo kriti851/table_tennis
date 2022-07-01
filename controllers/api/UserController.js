@@ -96,17 +96,17 @@ const profileUpload = multer({
       //       }
       //     }),
       body("nationality")
-          .trim()
-          .isAlpha()
-          .withMessage("Nationality Must be only alphabetical chars"),
+          .trim(),
+          // .isAlpha()
+          // .withMessage("Nationality Must be only alphabetical chars"),
       body("achievements").trim(),
       body("career").trim(),
       body("phone")
-          .trim()
-          .isNumeric()
-          .withMessage("Phone Number Must be Numeric")
-          .isLength({ min: 10, max: 10 })
-          .withMessage("Phone Number Must be at least 10 Number"),
+          .trim(),
+          // .isNumeric()
+          // .withMessage("Phone Number Must be Numeric")
+          // .isLength({ min: 10, max: 10 })
+          // .withMessage("Phone Number Must be at least 10 Number"),
       body("hand")
           .trim(),
       body("playing_style")
@@ -127,30 +127,9 @@ const profileUpload = multer({
       body("street_address2")
          .trim(),
       body("zip_code")
-         .trim()
-         .isNumeric()
-         .withMessage("Zip Code Must be only Numeric")
-         .isLength({ min: 4, max: 6 })
-         .withMessage("Zip Code Must Contain 5 Digits"),
-      //  body("password").custom((value, { req }) => {
-      //     if (value) {
-      //       if (value.length < 6) {
-      //         throw new Error("New Password must be 6 characters or greater.");
-      //       }
-      //       if (!req.body.old_password) {
-      //         throw new Error(
-      //           "Old  password is required and must be 6 characters or greater."
-      //         );
-      //       }
-      //       if (req.body.confirm_password !== req.body.password) {
-      //         throw new Error("Password confirmation does not match password");
-      //       }
-      //     }
-      //     // Indicates the success of this synchronous custom validator
-      //     return true;
-      //   }),
-        body("name").escape(),
-        body("username").escape(),
+         .trim(),
+      body("name").escape(),
+      body("username").escape(),
         async (req, res) => {
           try {
             const errors = validationResult(req);
@@ -165,6 +144,7 @@ const profileUpload = multer({
                 username,
                 email,
                 phone,
+                gender,
                 street_address1,
                 street_address2,
                 playing_style,
@@ -191,6 +171,7 @@ const profileUpload = multer({
                   email: email,
                   username: username,
                   phone: phone,
+                  gender:gender,
                   street_address1:street_address1,
                   street_address2:street_address2,
                   playing_style: playing_style,
@@ -210,17 +191,6 @@ const profileUpload = multer({
                   awards: awards,
                   favorite_serve: favorite_serve,
                 };
-              //   if (req.body.password) {
-              //     const isMatch = await bcrypt.compare(
-              //       req.body.old_password,
-              //       user.password
-              //     );
-              //     if (!isMatch) {
-              //       return apiResponse.ErrorResponse(res, "Incorrect old password!");
-              //     }
-              //     const pass = await bcrypt.hash(req.body.password, 10);
-              //     userData.password = pass;
-              //   }
                 const result = await UserModel.update(userData, {
                   where: { id: req.user.id },
                 });
@@ -249,10 +219,6 @@ const profileUpload = multer({
         },
       ];
     
-    
-
-//Update Profile
-
 //Change Password
 exports.changePassword = [
     auth,
@@ -370,9 +336,9 @@ exports.updateImage = [
           "Something went wrong!"
         );
      }
-        return apiResponse.successResponse(
+        return apiResponse.successResponseWithData(
          res,
-         "User profile updated successfully."
+         "User profile updated successfully.",
      );
   });
 }

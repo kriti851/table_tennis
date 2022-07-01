@@ -22,11 +22,11 @@ autoIncrement: true
         allowNull: true,
        
     },
-    image: {
-        type: Sequelize.STRING,
-        allowNull: true,
+    // image: {
+    //     type: Sequelize.STRING,
+    //     allowNull: true,
        
-    },
+    // },
     created_at: {
         type: Sequelize.STRING,
         allowNull: true,

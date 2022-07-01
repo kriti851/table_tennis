@@ -67,6 +67,7 @@ exports.addlanguage = [
     },         
 ];
 
+//Language List
 exports.languages = [
     auth,
     async (req, res) => {
@@ -75,12 +76,6 @@ exports.languages = [
         let languages = await languageModel.findAll({
           //order: [["id", "desc"]],
         });
-        // if (!languages.length > 0) {
-        //   return apiResponse.successResponseWithData(
-        //     res,
-        //     "No information found by this user"
-        //   );
-        // }
         return apiResponse.successResponseWithData(
           res,
           "List of Languages",

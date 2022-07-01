@@ -97,6 +97,10 @@ const user = sequelize.define('users', {
         type: Sequelize.STRING,
         allowNull: true
     },  
+    default_lang: {
+        type: Sequelize.STRING,
+        allowNull: true
+    }, 
     location: {
         type: Sequelize.STRING,
         allowNull: true
