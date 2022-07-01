@@ -2,45 +2,13 @@ const UserModel = require("../../models/user");
 const { body, validationResult, check } = require("express-validator");
 const apiResponse = require("../../helpers/apiResponse");
 const Password = require('node-php-password');
+const path = require("path");
 const auth = require("../../middlewares/jwt");
-var path = require("path");
-const fs = require("fs-extra");
-var os = require("os");
-const multer = require("multer");
+const fileUpload = require("express-fileupload");
+var filemidlleware = fileUpload();
+
 require("dotenv").config();
 const { v4: uuidv4 } = require("uuid");
-
-const storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    let path = `./public/uploads/`;
-    fs.mkdirsSync(path);
-    callback(null, path);
-  },
-  filename: function (req, file, cb) {
-    cb(
-    null,
-      "" + uuidv4() + "-" + Date.now() + path.extname(file.originalname)
-    );
-    //cb(null, 'avatar-' + Date.now() + path.extname(file.originalname));
-  },
-});
-
-const fileFilter = (req, file, cb) => {
-    const allowedFileTypes = ["image/jpeg", "image/jpg", "image/png"];
-    if (allowedFileTypes.includes(file.mimetype)) {
-        cb(null, true);
-    } else {
-        cb(null, false);
-    }
-  };
-
-const profileUpload = multer({
-    storage: storage,
-    limits: {
-        fileSize: 1024 * 1024 * 2,
-    },
-    fileFilter: fileFilter,
-    });
 
 
     exports.detail = [
@@ -241,6 +209,9 @@ const profileUpload = multer({
       },
     ];
   
+    
+
+
 exports.changePassword = [
     auth,
     body("old_password")
@@ -318,76 +289,44 @@ exports.changePassword = [
     }
   },
 ];
-//Image Update
-exports.updateImage = [
-    auth,
-    profileUpload.single("image"),
-    async (req, res) => {
-    try {
-         const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-          return apiResponse.validationErrorWithData(
-          res,
-          "Validation Error.",
-          errors.array()
-        );
-      } else {
-         const user = await UserModel.findOne({ where: { id: req.user.id } });
-    if (user) {
-          const oldPhoto = user.image;
-    if (oldPhoto) {
-          const oldPath = path.join(
-            __dirname,
-            "../../",
-            "public/uploads/",
-            oldPhoto
-        );
-    if (fs.existsSync(oldPath)) {
-             fs.unlink(oldPath, async (err) => {
-    if (err) {
-          return apiResponse.ErrorResponse(res, err);
-         }
-          const result = await UserModel.update(
-            { image: req.file.filename },
-            { where: { id: user.id } }
-        );
-    if (!result) {
-          return apiResponse.unauthorizedResponse(
-          res,
-          "Something went wrong!"
-        );
-     }
-        return apiResponse.successResponse(
-         res,
-         "User profile updated successfully."
-     );
-  });
-}
-     } else {
-         const result = await UserModel.update(
-         { image: req.file.filename },
-         { where: { id: user.id } }
-    );
-         console.log(result, "reddddddddddddddddddddg");
-    if (!result) {
-         return apiResponse.unauthorizedResponse(
-         res,
-         "Something went wrong!"
-      );
-    }
-        return apiResponse.successResponse(
-        res,
-        "User profile updated successfully."
-            );
+
+
+
+
+
+
+
+
+
+module.exports.updateImage=[auth,  filemidlleware,async (req,res)=>{
+  if(typeof req.files !='undefined'){
+      var files = req.files;
+      try{
+          var image = files.image;
+          if(image.mimetype.indexOf('image/') > -1){
+              var filepath = 'public/uploads'+req.user.id+Date.now()+path.extname(image.name);
+              await image.mv(filepath, image);
+              await UserModel.update({image:filepath},{where:{id:req.user.id}});
+              let data = {
+                image: "http://localhost:3000/" + filepath
+                
+              };
+            
+              return apiResponse.successResponseWithData(
+                res,
+                "Profile pic uploded successfully.",
+                data);
+          }else{
+            return apiResponse.unauthorizedResponse(res, "file must be image");
           }
-        } else {
-          return apiResponse.unauthorizedResponse(res, "User not found.");
-        }
-      }
-    } catch (err) {
-      console.log(err, "sdeeeeeeeeeeeeef");
-      //throw error in json response with status 500.
-      return apiResponse.ErrorResponse(res, err);
-    }
-  },
-];
+         } catch (err) {
+            console.log(err, "sdeeeeeeeeeeeeef");
+            //throw error in json response with status 500.
+            return apiResponse.ErrorResponse(res, err);
+          }
+  }else{
+    return apiResponse.ErrorResponse(res, "file is required");
+  }
+}];
+
+
