@@ -309,74 +309,74 @@ exports.changePassword = [
 ];
 //Image Update
 exports.updateImage = [
-    auth,
-    profileUpload.single("image"),
-    async (req, res) => {
-    try {
-         const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-          return apiResponse.validationErrorWithData(
-          res,
-          "Validation Error.",
-          errors.array()
-        );
-      } else {
-         const user = await UserModel.findOne({ where: { id: req.user.id } });
-    if (user) {
-          const oldPhoto = user.image;
-    if (oldPhoto) {
-          const oldPath = path.join(
-            __dirname,
-            "../../",
-            "public/uploads/",
-            oldPhoto
-        );
-    if (fs.existsSync(oldPath)) {
-             fs.unlink(oldPath, async (err) => {
-    if (err) {
-          return apiResponse.ErrorResponse(res, err);
-         }
-          const result = await UserModel.update(
-            { image: req.file.filename },
-            { where: { id: user.id } }
-        );
-    if (!result) {
-          return apiResponse.unauthorizedResponse(
-          res,
-          "Something went wrong!"
-        );
-     }
-        return apiResponse.successResponseWithData(
-         res,
-         "User profile updated successfully.",
-     );
-  });
-}
-     } else {
-         const result = await UserModel.update(
-         { image: req.file.filename },
-         { where: { id: user.id } }
-    );
-         console.log(result, "reddddddddddddddddddddg");
-    if (!result) {
-         return apiResponse.unauthorizedResponse(
-         res,
-         "Something went wrong!"
-      );
-    }
-        return apiResponse.successResponse(
-        res,
-        "User profile updated successfully."
-            );
-          }
-        } else {
-          return apiResponse.unauthorizedResponse(res, "User not found.");
-        }
-      }
-    } catch (err) {
-      console.log(err, "sdeeeeeeeeeeeeef");
-      //throw error in json response with status 500.
-      return apiResponse.ErrorResponse(res, err);
-    }
-  },
+//     auth,
+//     profileUpload.single("image"),
+//     async (req, res) => {
+//     try {
+//          const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//           return apiResponse.validationErrorWithData(
+//           res,
+//           "Validation Error.",
+//           errors.array()
+//         );
+//       } else {
+//          const user = await UserModel.findOne({ where: { id: req.user.id } });
+//     if (user) {
+//           const oldPhoto = user.image;
+//     if (oldPhoto) {
+//           const oldPath = path.join(
+//             __dirname,
+//             "../../",
+//             "public/uploads/",
+//             oldPhoto
+//         );
+//     if (fs.existsSync(oldPath)) {
+//              fs.unlink(oldPath, async (err) => {
+//     if (err) {
+//           return apiResponse.ErrorResponse(res, err);
+//          }
+//           const result = await UserModel.update(
+//             { image: req.file.filename },
+//             { where: { id: user.id } }
+//         );
+//     if (!result) {
+//           return apiResponse.unauthorizedResponse(
+//           res,
+//           "Something went wrong!"
+//         );
+//      }
+//         return apiResponse.successResponseWithData(
+//          res,
+//          "User profile updated successfully.",
+//      );
+//   });
+// }
+//      } else {
+//          const result = await UserModel.update(
+//          { image: req.file.filename },
+//          { where: { id: user.id } }
+//     );
+//          console.log(result, "reddddddddddddddddddddg");
+//     if (!result) {
+//          return apiResponse.unauthorizedResponse(
+//          res,
+//          "Something went wrong!"
+//       );
+//     }
+//         return apiResponse.successResponse(
+//         res,
+//         "User profile updated successfully."
+//             );
+//           }
+//         } else {
+//           return apiResponse.unauthorizedResponse(res, "User not found.");
+//         }
+//       }
+//     } catch (err) {
+//       console.log(err, "sdeeeeeeeeeeeeef");
+//       //throw error in json response with status 500.
+//       return apiResponse.ErrorResponse(res, err);
+//     }
+//   },
 ];
