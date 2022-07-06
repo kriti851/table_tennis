@@ -169,48 +169,86 @@ exports.update = [
 //Chaage Password API
 exports.changePassword = [
   auth,
-  body("password")
-  .trim()
-  .notEmpty()
-  .withMessage("Password should not be empty")
-  .isStrongPassword({
-    minLength: 8,
-    minLowercase: 1,
-    minUppercase: 1,
-    minNumbers: 1,
+  body("old_password")
+    .trim()
+    .notEmpty()
+    .withMessage("Password Should not be Empty")
+    .isStrongPassword({
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+    })
+    .withMessage("password must be strong."),
+    body("password")
+    .trim()
+    .notEmpty()
+    .withMessage("Password Should not be Empty")
+    .isStrongPassword({
+      minLength: 8,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+    })
+    .withMessage("password must be strong."),
+  body("password").isLength({ min: 6 }).trim().withMessage("Password must be 6 characters or greater."),
+  body('confirmpassword').custom((value, { req }) => {
+      if (value !== req.body.password) {
+          throw new Error('Password confirmation does not match password');
+      }
+  
+      // Indicates the success of this synchronous custom validator
+      return true;
   }),
-    body('confirmpassword').custom((confirmpassword,{req})=>{
-        var password =req.body.password;
-        return new Promise(async (resolve,reject) =>{
-            if(password!=confirmpassword){
-                return reject('Password confirmation does not match with password');
-            }else{
-                return resolve(true);
-            }
-        }); 
-    }),
-
+  body("old_password").escape(),
   body("password").escape(),
-  async (req, res) => {
-  try {
-    var errors =validationResult(req);
-      if(errors.isEmpty()){
-          var body =req.body;
-          var user = await UserModel.findOne({where:{id:req.user.id}});
-          user.password=Password.hash(body.password);
-          await user.save();
-          return apiResponse.successResponse(res,"Password changed successfully.");
-      }else{
-        return apiResponse.validationErrorWithData(
-          res,
-          "Validation Error.",
-          errors.array({ onlyFirstError: false })[0].msg
-        );
-      }
-     } catch{
+ async (req, res) => {
+      try {
+          const errors = validationResult(req);
+          if (!errors.isEmpty()) {
+            return apiResponse.validationErrorWithData(
+              res,
+              errors.array({ onlyFirstError: false })[0].msg
+            );
+          }else {
+              const { old_password,password } = req.body;
 
+              console.log(old_password)
+              console.log(password)
+              const user = await UserModel.findOne({where:{id:req.user.id}});
+
+              if (user) {
+                  const isMatch = await Password.verify(old_password, user.password);
+
+                  if (!isMatch) {
+                      return apiResponse.ErrorResponse(res, 'Incorrect old password!');
+                  }
+                    
+                      if (password) {
+                        const pass = Password.hash(req.body.password);
+                          const result = await UserModel.update({password:pass,otp:null},{where:{id:user.id}});
+                          if(!result){
+                              return apiResponse.unauthorizedResponse(res, "Something went wrong!");
+                          }
+
+                          return apiResponse.successResponse(res,"Password changed successfully.");
+                      }
+                      else{
+                          return apiResponse.unauthorizedResponse(res, "Something went wrong!");
+                      }
+             
+              }else{
+                  return apiResponse.unauthorizedResponse(res, "No authorization token was found.");
+              }
+              
+          }
+      } catch (err) {
+        console.log(err,"dasfffffff")
+          return apiResponse.ErrorResponse(res, err);
       }
-    }];
+  }];
+
+
 
 //Update Profile Image API
 module.exports.updateImage=[auth,  filemidlleware,async (req,res)=>{

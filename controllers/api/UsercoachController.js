@@ -2,6 +2,7 @@ const usercoachchatModel = require("../../models/usercoachchat");
 const usercoachrecentchatModel = require("../../models/usercoachrecentchat");
 const sequelize = require("../../config/db");
 const apiResponse = require("../../helpers/apiResponse");
+const { Op } = require("sequelize");
 const auth = require("../../middlewares/jwt");
 const { body, validationResult,check } = require("express-validator");
 const fileUpload = require("express-fileupload");
@@ -82,8 +83,38 @@ exports.Usersendmessagetocoach = [
       }
       var recentChat = await usercoachrecentchatModel.findOne({
         where: {
-          sender_id: req.user.id,
-        },
+          [Op.or]: [
+           {
+             [Op.and]: [
+                { sender_id: req.user.id},
+                { receiver_id: req.body.receiver_id},
+             ]
+          },
+           {
+             [Op.and]: [
+              {sender_id:req.body.receiver_id },
+              { receiver_id: req.user.id}
+             ]
+           }
+          ]
+      },
+   
+
+
+      //   where: {
+      //     [Op.and]: [
+      //         { sender_id: req.user.id,},
+      //         { receiver_id: req.body.receiver_id},
+      //       ]
+      //       [Op.or]:{
+
+      //       }
+      
+      // }
+        // where: {
+        //   sender_id: req.user.id,
+        //    receiver_id: req.body.receiver_id
+        // },
       });
       if (recentChat) {
         recentChat.message = req.body.message;
@@ -198,9 +229,25 @@ exports.Coachsendmessagetouser= [
         );
       }
       var recentChat = await usercoachrecentchatModel.findOne({
+        // where: {
+        //   sender_id: req.user.id,
+        // },
         where: {
-          sender_id: req.user.id,
-        },
+          [Op.or]: [
+           {
+             [Op.and]: [
+                { sender_id: req.user.id},
+                { receiver_id: req.body.receiver_id},
+             ]
+          },
+           {
+             [Op.and]: [
+              {sender_id:req.body.receiver_id },
+              { receiver_id: req.user.id}
+             ]
+           }
+          ]
+      },
       });
       if (recentChat) {
         recentChat.message = req.body.message;
@@ -243,13 +290,33 @@ exports.Coachsendmessagetouser= [
   },
 ];
 
+
+
+module.exports.UserCoachRecentChatting=async (req,res)=>{
+  var sql = "SELECT usercoachrecentchats.sender_id,usercoachrecentchats.receiver_id, usercoachrecentchats.message, users.name,CONCAT('" +process.env.IMAGEURL +"',`users`.`image`) as image FROM usercoachrecentchats INNER JOIN users ON usercoachrecentchats.receiver_id = users.id ORDER BY usercoachrecentchats.updatedat DESC";
+  var recentChat = await sequelize.query(sql,{type:sequelize.QueryTypes.SELECT});
+  if(recentChat.length){
+      return apiResponse.successResponseWithData(
+        res,
+        "Recent chat found",
+        recentChat
+      );
+  }else{
+      return apiResponse.successResponseWithData(
+        res,
+        "Recent chat not  found",
+        recentChat
+      );
+  }
+}
+
 exports. getchat = [
     auth,
     filemidlleware,
     async (req,res)=>{
     try{
        var chatdata = await sequelize.query(
-         "SELECT * FROM `coachplayerchats` WHERE ( sender_id="+req.user.id+" AND receiver_id ="+req.body.receiver_id+" ) OR (sender_id ="+req.body.receiver_id+" AND receiver_id = "+req.user.id+") ORDER BY coachplayerchats.id DESC",
+         "SELECT * FROM `usercoachchats` WHERE ( sender_id="+req.user.id+" AND receiver_id ="+req.body.receiver_id+" ) OR (sender_id ="+req.body.receiver_id+" AND receiver_id = "+req.user.id+") ORDER BY usercoachchats.id DESC",
           {type:sequelize.QueryTypes.SELECT}
       ); 
       return apiResponse.successResponseWithData(
@@ -264,3 +331,6 @@ exports. getchat = [
 
     }];
 
+
+   
+  
