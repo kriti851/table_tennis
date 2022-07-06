@@ -8,8 +8,7 @@ const { body, validationResult,check } = require("express-validator");
 const fileUpload = require("express-fileupload");
 var filemidlleware = fileUpload();
 const path = require("path");
-
-
+//
 exports.Usersendmessagetocoach = [
   auth,
   filemidlleware,
@@ -98,9 +97,6 @@ exports.Usersendmessagetocoach = [
            }
           ]
       },
-   
-
-
       //   where: {
       //     [Op.and]: [
       //         { sender_id: req.user.id,},
@@ -157,7 +153,7 @@ exports.Usersendmessagetocoach = [
     }
   },
 ];
-
+//
 exports.Coachsendmessagetouser= [
   auth,
   filemidlleware,
@@ -289,9 +285,7 @@ exports.Coachsendmessagetouser= [
     }
   },
 ];
-
-
-
+//
 module.exports.UserCoachRecentChatting=async (req,res)=>{
   var sql = "SELECT usercoachrecentchats.sender_id,usercoachrecentchats.receiver_id, usercoachrecentchats.message, users.name,CONCAT('" +process.env.IMAGEURL +"',`users`.`image`) as image FROM usercoachrecentchats INNER JOIN users ON usercoachrecentchats.receiver_id = users.id ORDER BY usercoachrecentchats.updatedat DESC";
   var recentChat = await sequelize.query(sql,{type:sequelize.QueryTypes.SELECT});
@@ -309,7 +303,7 @@ module.exports.UserCoachRecentChatting=async (req,res)=>{
       );
   }
 }
-
+//
 exports. getchat = [
     auth,
     filemidlleware,

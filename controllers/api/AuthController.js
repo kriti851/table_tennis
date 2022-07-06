@@ -406,7 +406,7 @@ exports.login = [
             dob: user.dob,
             gender: user.gender,
             user_type: user.user_type,
-            default_lang:user.default_lang,
+            language:user.language,
           };
           // user matched!
           const secretKey = process.env.JWT_SECRET || "";

@@ -97,10 +97,9 @@ const user = sequelize.define('users', {
         type: Sequelize.STRING,
         allowNull: true
     },  
-    default_lang: {
-        type: Sequelize.STRING,
-        allowNull: true
-    }, 
+    language: 
+        Sequelize.ENUM(['en', 'fr', 'zh-hans']),
+
     location: {
         type: Sequelize.STRING,
         allowNull: true
