@@ -11,6 +11,8 @@ const mailer = require("../../helpers/mailer");
 const { constants } = require("../../helpers/constants");
 const { Op } = require("sequelize");
 require("dotenv").config();
+
+//Registration API For USER/PLAYER/COACH
 exports.register = [
   check("name")
     .trim()
@@ -75,21 +77,7 @@ exports.register = [
       return true;
     }),
   body("achievements").trim(),
-  // .custom((value, { req }) => {
-  //   if (req.body.user_type == "player" && !value)
-  //     throw new Error("achievements is required");
-  //   if (req.body.user_type == "coach" && !value)
-  //     throw new Error("achievements is required");
-  //   return true;
-  // }),
   body("career").trim(),
-  // .custom((value, { req }) => {
-  //   if (req.body.user_type == "player" && !value)
-  //     throw new Error("career is required");
-  //   if (req.body.user_type == "coach" && !value)
-  //     throw new Error("career is required");
-  //   return true;
-  // }),
   body("phone")
     .trim()
     .isNumeric()
@@ -107,8 +95,6 @@ exports.register = [
     }),
   body("hand")
     .trim()
-    // .isAlpha("en-US", { ignore: " " })
-    // .withMessage("hand Must be only alphabetical chars")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
         throw new Error("hand is required");
@@ -118,8 +104,6 @@ exports.register = [
     }),
   body("playing_style")
     .trim()
-    // .isAlpha("en-US", { ignore: " " })
-    // .withMessage("Playing style Must be in alphabetical chars")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
         throw new Error("playing style is required");
@@ -160,16 +144,8 @@ exports.register = [
     //     throw new Error("team is required");
     //   return true;
     // }),
-  body("club").trim(),
-  // .isAlphanumeric("en-US", { ignore: " " })
-  // .withMessage("Club Must be only alphanumeric"),
-  // .custom((value, { req }) => {
-  //   if (req.body.user_type == "player" && !value)
-  //     throw new Error("club is required");
-  //   if (req.body.user_type == "coach" && !value)
-  //     throw new Error("club is required");
-  //   return true;
-  // })
+  body("club")
+    .trim(),
   body("favorite_serve")
     .trim()
     // .isAlpha("en-US", { ignore: " " })
@@ -183,15 +159,6 @@ exports.register = [
     }),
   body("awards")
     .trim(),
-  // .isAlpha("en-US", { ignore: " " })
-  // .withMessage("Award Must be only Char"),
-  // .custom((value, { req }) => {
-  //   if (req.body.user_type == "player" && !value)
-  //     throw new Error("Award is required");
-  //   if (req.body.user_type == "coach" && !value)
-  //     throw new Error("Award  is required");
-  //   return true;
-  // }),
   body("tournament_played")
      .trim(),
   body("street_address1")

@@ -26,7 +26,7 @@ var app = express();
 app.use("/auth/", authRouter);
 app.use("/chat/", chatRouter);
 app.use("/review/", reviewRouter);
-app.use("post/" , postRouter);
+app.use("/post/" , postRouter);
 app.use("/language/" , languageRouter);
 app.use("/message/", payeruserchatRouter);
 app.use("/user/", userRouter);
@@ -40,7 +40,6 @@ app.use("/default/",defaultRouter);
 app.use("/clip/",shortclipRouter);
 app.use("/article/", articlerouter);
 app.use("/promotion/", promotionrouter);
-app.use("post/" , postRouter);
 app.use("/language/" , languageRouter);
 
 // throw 404 if URL not found

@@ -17,25 +17,22 @@ autoIncrement: true
         type: Sequelize.STRING,
         allowNull: true
     },
-    discription: {
+    description: {
+        type: Sequelize.STRING,
+        allowNull: true,     
+    },
+    image: {
         type: Sequelize.STRING,
         allowNull: true,
        
     },
-    // image: {
-    //     type: Sequelize.STRING,
-    //     allowNull: true,
-       
-    // },
     created_at: {
         type: Sequelize.STRING,
-        allowNull: true,
-       
+        allowNull: true,       
     },
     updated_at: {
         type: Sequelize.STRING,
-        allowNull: true,
-       
+        allowNull: true,      
     },
 
 },{ 

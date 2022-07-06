@@ -59,22 +59,12 @@ exports.add = [
     .withMessage("Must be only alphabetical chars"),
   body("team_activity")
     .trim(),
-    // .notEmpty()
-    // .withMessage("post is Required")
-    // .isAlpha("en-US", { ignore: " " })
-    // .withMessage("Must be only alphabetical chars"),
   body("who_can_post")
     .trim(),
   body("invite")
     .trim(),
   body("team_notification")
     .trim(),
-//   body("post")
-//     .trim()
-//     .notEmpty()
-//     .withMessage("post is Required")
-//     .isAlpha("en-US", { ignore: " " })
-//     .withMessage("Must be only alphabetical chars"),
   async (req, res) => {
     try {
       var errors = validationResult(req);
@@ -102,7 +92,7 @@ exports.add = [
           : process.env.IMAGEURL + "public/uploads/default.png";
         return apiResponse.successResponseWithData(
           res,
-          "Team created Sucessfully",
+          "Team created Successfully",
           info
         );
       } else {
@@ -122,7 +112,7 @@ exports.add = [
           : process.env.IMAGEURL + "public/uploads/default.png";
         return apiResponse.successResponseWithData(
           res,
-          "Team created Sucessfully",
+          "Team created Successfully",
           info
         );
       }

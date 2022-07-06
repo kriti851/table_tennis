@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');    
 const sequelize = require('../config/db');    
     
-const country = sequelize.define('countries', {  
+const country = sequelize.define('country', {  
 id:{
 type:Sequelize.NUMBER,    
 allowNull:false,    
@@ -17,26 +17,18 @@ autoIncrement: true
         type: Sequelize.STRING,
         allowNull: true
     },
-    nicename: {
-        type: Sequelize.STRING,
-        allowNull: true,
-       
-    },
     iso3: {
         type: Sequelize.STRING,
         allowNull: true,
        
     },
-
-    numcode: {
+    num_code: {
         type: Sequelize.STRING,
-        allowNull: true,
-       
+        allowNull: true,      
     },
-    phonecode: {
+    dial_code: {
         type: Sequelize.STRING,
-        allowNull: true,
-       
+        allowNull: true,      
     }
 },{ 
     timestamps: true,
