@@ -185,7 +185,6 @@ exports.add = [
 //   },
 // ];
 
-//
 // exports.list = [
 //   auth,
 //   async (req, res) => {
@@ -217,3 +216,32 @@ exports.add = [
 //     }
 //   },
 // ];
+exports.teamlist = [
+  auth,
+  async (req, res) => {
+    console.log(req);
+    try {  
+      let team = await teamModel.findAll({
+        attributes: [
+          "id",
+          "team_name", 
+          "location",      
+          [
+            sequelize.literal(
+              "CONCAT('" + process.env.IMAGEURL + "public/uploads/" + "',image)"
+            ),
+            "image",
+          ],
+        ],
+        //order: [["id", "desc"]],    
+      });
+      return apiResponse.successResponseWithData(
+        res,
+        "List of Teams Created By You",
+        team
+      );
+    } catch (err) {
+      return apiResponse.ErrorResponse(res, err);
+    }
+  },
+];

@@ -16,14 +16,15 @@ exports.detail = [
     async (req, res) => {
       try {
         const user = await UserModel.findOne({
-          attributes: { exclude: ["password", "confirmpassword", "otp"] },
+          attributes:            
+          { exclude: ["password", "confirmpassword","otp","card_no","cvc_no","expiry_month","expiry_year","createdAt","updatedAt"] },
           where: { id: req.user.id },
         }); 
         if (!user) {
           return apiResponse.ErrorResponse(res, "Something went wrong");
         }
           user.image = user.image ? process.env.IMAGEURL + 'public/uploads/' + user.image : process.env.IMAGEURL + 'public/uploads/default.png';
-        return apiResponse.successResponseWithData(res, "User Information reterive Sudcessfully", user);
+        return apiResponse.successResponseWithData(res, "Information reterive Successfully", user);
       } catch (err) {
         return apiResponse.ErrorResponse(res, err);
       }

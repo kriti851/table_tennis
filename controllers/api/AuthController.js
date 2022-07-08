@@ -31,7 +31,10 @@ exports.register = [
     .notEmpty()
     .isLength({ min: 1 })
     .withMessage("Gender is required."),
-  body("dob").trim().isLength({ min: 1 }).withMessage("DOB is required."),
+  body("dob")
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage("DOB is required."),
   body("email")
     .trim()
     .notEmpty()
@@ -56,7 +59,7 @@ exports.register = [
       minUppercase: 1,
       minNumbers: 1,
     })
-    .withMessage("password must be strong."),
+    .withMessage("Password must be strong."),
   body("confirmpassword").custom((value, { req }) => {
     if (value !== req.body.password) {
       throw new Error("Password confirmation does not match with password");
@@ -65,8 +68,8 @@ exports.register = [
   }),
   body("nationality")
     .trim()
-    .isAlpha()
-    .withMessage("Nationality Must be only alphabetical chars")
+    // .isAlpha()
+    // .withMessage("Nationality Must be only alphabetical chars")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
         throw new Error("Nationality is required");
@@ -97,18 +100,18 @@ exports.register = [
     .trim()
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
-        throw new Error("hand is required");
+        throw new Error("Hand is required");
       if (req.body.user_type == "coach" && !value)
-        throw new Error("hand is required");
+        throw new Error("Hand is required");
       return true;
     }),
   body("playing_style")
     .trim()
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
-        throw new Error("playing style is required");
+        throw new Error("Playing style is required");
       if (req.body.user_type == "coach" && !value)
-        throw new Error("playing style is required");
+        throw new Error("Playing style is required");
       return true;
     }),
   body("grip")
@@ -117,13 +120,13 @@ exports.register = [
     // .withMessage("Grip Must be only alphabetical chars")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
-        throw new Error("grip is required");
+        throw new Error("Grip is required");
       if (req.body.user_type == "coach" && !value)
-        throw new Error("grip is required");
+        throw new Error("Grip is required");
       return true;
     }),
-  //   body("height")
-  //      .trim(),
+    body("height")
+       .trim(),
   // .isNumeric()
   // .withMessage("Height must be numeric")
   // .custom((value, { req }) => {

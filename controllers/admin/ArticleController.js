@@ -214,7 +214,6 @@ exports.update = [
         title: body.title,
         content: body.content
       }
-
     }
     try {
       await ArticleModel.update(set_data, { where: { id: req.body.id } });
