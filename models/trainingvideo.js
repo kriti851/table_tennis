@@ -21,14 +21,10 @@ const trainingvideo = sequelize.define('trainingvideos', {
         allowNull:true,   
 
     },
-
     video:{
         type: Sequelize.STRING,
         allowNull: true
     },   
-    
-
-
 },{ 
     timestamps: true});
   module.exports =trainingvideo;  

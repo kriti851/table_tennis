@@ -220,7 +220,7 @@ exports.teamlist = [
   auth,
   async (req, res) => {
     console.log(req);
-    try {  
+    try { 
       let team = await teamModel.findAll({
         attributes: [
           "id",
