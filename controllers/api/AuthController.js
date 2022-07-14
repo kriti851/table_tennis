@@ -1,3 +1,4 @@
+//const devicetokenModel = require("../../models/devicetoken");
 const UserModel = require("../../models/user");
 const moment = require("moment");
 const Password = require("node-php-password");
@@ -9,10 +10,19 @@ const utility = require("../../helpers/utility");
 const jwt = require("jsonwebtoken");
 const mailer = require("../../helpers/mailer");
 const { constants } = require("../../helpers/constants");
+//const { sendNotification } = require("../../libaries/firebase");
 const { Op } = require("sequelize");
 require("dotenv").config();
-
-//Registration API For USER/PLAYER/COACH
+var sendNotificationTouser = (uniqueTokens) => {
+  var notification = {
+    title: "Buy subscription",
+    body: "your free trial has been end",
+    data: {
+      type: "subscription",
+    },
+  };
+  sendNotification(uniqueTokens, notification);
+};
 exports.register = [
   check("name")
     .trim()
@@ -31,10 +41,7 @@ exports.register = [
     .notEmpty()
     .isLength({ min: 1 })
     .withMessage("Gender is required."),
-  body("dob")
-    .trim()
-    .isLength({ min: 1 })
-    .withMessage("DOB is required."),
+  body("dob").trim().isLength({ min: 1 }).withMessage("DOB is required."),
   body("email")
     .trim()
     .notEmpty()
@@ -59,7 +66,7 @@ exports.register = [
       minUppercase: 1,
       minNumbers: 1,
     })
-    .withMessage("Password must be strong."),
+    .withMessage("password must be strong."),
   body("confirmpassword").custom((value, { req }) => {
     if (value !== req.body.password) {
       throw new Error("Password confirmation does not match with password");
@@ -68,8 +75,8 @@ exports.register = [
   }),
   body("nationality")
     .trim()
-    // .isAlpha()
-    // .withMessage("Nationality Must be only alphabetical chars")
+    .isAlpha()
+    .withMessage("Nationality Must be only alphabetical chars")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
         throw new Error("Nationality is required");
@@ -80,7 +87,21 @@ exports.register = [
       return true;
     }),
   body("achievements").trim(),
+  // .custom((value, { req }) => {
+  //   if (req.body.user_type == "player" && !value)
+  //     throw new Error("achievements is required");
+  //   if (req.body.user_type == "coach" && !value)
+  //     throw new Error("achievements is required");
+  //   return true;
+  // }),
   body("career").trim(),
+  // .custom((value, { req }) => {
+  //   if (req.body.user_type == "player" && !value)
+  //     throw new Error("career is required");
+  //   if (req.body.user_type == "coach" && !value)
+  //     throw new Error("career is required");
+  //   return true;
+  // }),
   body("phone")
     .trim()
     .isNumeric()
@@ -98,20 +119,24 @@ exports.register = [
     }),
   body("hand")
     .trim()
+    // .isAlpha("en-US", { ignore: " " })
+    // .withMessage("hand Must be only alphabetical chars")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
-        throw new Error("Hand is required");
+        throw new Error("hand is required");
       if (req.body.user_type == "coach" && !value)
-        throw new Error("Hand is required");
+        throw new Error("hand is required");
       return true;
     }),
   body("playing_style")
     .trim()
+    // .isAlpha("en-US", { ignore: " " })
+    // .withMessage("Playing style Must be in alphabetical chars")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
-        throw new Error("Playing style is required");
+        throw new Error("playing style is required");
       if (req.body.user_type == "coach" && !value)
-        throw new Error("Playing style is required");
+        throw new Error("playing style is required");
       return true;
     }),
   body("grip")
@@ -120,13 +145,13 @@ exports.register = [
     // .withMessage("Grip Must be only alphabetical chars")
     .custom((value, { req }) => {
       if (req.body.user_type == "player" && !value)
-        throw new Error("Grip is required");
+        throw new Error("grip is required");
       if (req.body.user_type == "coach" && !value)
-        throw new Error("Grip is required");
+        throw new Error("grip is required");
       return true;
     }),
-    body("height")
-       .trim(),
+  //   body("height")
+  //      .trim(),
   // .isNumeric()
   // .withMessage("Height must be numeric")
   // .custom((value, { req }) => {
@@ -136,19 +161,26 @@ exports.register = [
   //     throw new Error("height is required");
   //   return true;
   // }),
-  body("team")
-    .trim(),
-    // .isAlpha("en-US", { ignore: " " })
-    // .withMessage("Team Must be only alphabetical chars"),
-    // .custom((value, { req }) => {
-    //   if (req.body.user_type == "player" && !value)
-    //     throw new Error("team is required");
-    //   if (req.body.user_type == "coach" && !value)
-    //     throw new Error("team is required");
-    //   return true;
-    // }),
-  body("club")
-    .trim(),
+  body("team").trim(),
+  // .isAlpha("en-US", { ignore: " " })
+  // .withMessage("Team Must be only alphabetical chars"),
+  // .custom((value, { req }) => {
+  //   if (req.body.user_type == "player" && !value)
+  //     throw new Error("team is required");
+  //   if (req.body.user_type == "coach" && !value)
+  //     throw new Error("team is required");
+  //   return true;
+  // }),
+  body("club").trim(),
+  // .isAlphanumeric("en-US", { ignore: " " })
+  // .withMessage("Club Must be only alphanumeric"),
+  // .custom((value, { req }) => {
+  //   if (req.body.user_type == "player" && !value)
+  //     throw new Error("club is required");
+  //   if (req.body.user_type == "coach" && !value)
+  //     throw new Error("club is required");
+  //   return true;
+  // })
   body("favorite_serve")
     .trim()
     // .isAlpha("en-US", { ignore: " " })
@@ -160,10 +192,17 @@ exports.register = [
         throw new Error("favorite_serve is required");
       return true;
     }),
-  body("awards")
-    .trim(),
-  body("tournament_played")
-     .trim(),
+  body("awards").trim(),
+  // .isAlpha("en-US", { ignore: " " })
+  // .withMessage("Award Must be only Char"),
+  // .custom((value, { req }) => {
+  //   if (req.body.user_type == "player" && !value)
+  //     throw new Error("Award is required");
+  //   if (req.body.user_type == "coach" && !value)
+  //     throw new Error("Award  is required");
+  //   return true;
+  // }),
+  body("tournament_played").trim(),
   body("street_address1")
     .trim()
     .custom((value, { req }) => {
@@ -178,8 +217,7 @@ exports.register = [
         throw new Error("street_address1 is required");
       return true;
     }),
-  body("street_address2")
-    .trim(),
+  body("street_address2").trim(),
   body("zip_code")
     .trim()
     .isNumeric()
@@ -245,6 +283,7 @@ exports.register = [
         if ("coach" == req.body.user_type) {
           startdate = new Date();
           let userData = {
+            id: user.id,
             name: user.name,
             username: user.username,
             user_type: user.user_type,
@@ -274,10 +313,16 @@ exports.register = [
               .add(21, "days")
               .format("YYYY-MM-DD hh:mm:ss A"),
           };
-          const secretKey = process.env.JWT_SECRET || "";
-          userData.token = jwt.sign({ id: user.id.toString() }, secretKey, {
-            expiresIn: process.env.JWT_TIMEOUT_DURATION,
-          });
+
+
+          var token = await jwt.sign(userData, "thisissecuritytoken", {
+            expiresIn: '365d'
+        });
+        userData.token = token;
+          // const secretKey = process.env.JWT_SECRET || "";
+          // userData.token = jwt.sign({ id: user.id.toString() }, secretKey, {
+          //   expiresIn: process.env.JWT_TIMEOUT_DURATION,
+          // });
           return apiResponse.successResponseWithData(
             res,
             "Coach Registered Successfully.",
@@ -286,6 +331,7 @@ exports.register = [
         } else if ("player" == req.body.user_type) {
           startdate = new Date();
           let playerInfo = {
+            id: user.id,
             name: user.name,
             username: user.username,
             user_type: user.user_type,
@@ -305,17 +351,26 @@ exports.register = [
             team: user.team,
             club: user.club,
             awards: user.awards,
-            tournament_played:user.tournament_played,
+            tournament_played: user.tournament_played,
             achievements: user.achievements,
             career: user.career,
             zip_code: user.zip_code,
-            startdate:user.createdAt.toLocaleString(undefined, {timeZone: 'Asia/Kolkata'}),
-            enddate: moment(startdate).add(21,'days').format('YYYY-MM-DD hh:mm:ss A')
+            startdate: user.createdAt.toLocaleString(undefined, {
+              timeZone: "Asia/Kolkata",
+            }),
+            enddate: moment(startdate)
+              .add(21, "days")
+              .format("YYYY-MM-DD hh:mm:ss A"),
           };
-          const secretKey = process.env.JWT_SECRET || "";
-          playerInfo.token = jwt.sign({ id: user.id.toString() }, secretKey, {
-            expiresIn: process.env.JWT_TIMEOUT_DURATION,
-          });
+
+          var token = await jwt.sign(playerInfo, "thisissecuritytoken", {
+            expiresIn: '365d'
+        });
+        playerInfo.token = token;
+          // const secretKey = process.env.JWT_SECRET || "";
+          // playerInfo.token = jwt.sign({ id: user.id.toString() }, secretKey, {
+          //   expiresIn: process.env.JWT_TIMEOUT_DURATION,
+          // });
           return apiResponse.successResponseWithData(
             res,
             "Player Registered Successfully.",
@@ -324,6 +379,7 @@ exports.register = [
         } else {
           startdate = new Date();
           let userInfo = {
+            id: user.id,
             name: user.name,
             username: user.username,
             user_type: user.user_type,
@@ -343,10 +399,26 @@ exports.register = [
               .add(6, "days")
               .format("YYYY-MM-DD HH:mm:ss A z"),
           };
-          const secretKey = process.env.JWT_SECRET || "";
-          userInfo.token = jwt.sign({ id: user.id.toString() }, secretKey, {
-            expiresIn: process.env.JWT_TIMEOUT_DURATION,
-          });
+          
+
+          // if (enddate) {
+          //   sendNotificationTouser();
+            
+          // }
+
+
+
+          var token = await jwt.sign(userInfo, "thisissecuritytoken", {
+            expiresIn: '365d'
+        });
+        userInfo.token = token;
+          // const secretKey = process.env.JWT_SECRET || "";
+          // console.log(secretKey,"fssssssssssss")
+          // userInfo.token = jwt.sign({ id: user.id.toString() }, secretKey, {
+          //   expiresIn: process.env.JWT_TIMEOUT_DURATION,
+          // });
+
+          console.log(userInfo.token,"sadffffffffffff")
           return apiResponse.successResponseWithData(
             res,
             "User Registered Successfully.",
@@ -368,7 +440,6 @@ exports.register = [
  *
  * @returns {Object}
  */
-
 
 //Login API
 exports.login = [
@@ -400,8 +471,8 @@ exports.login = [
           user.password &&
           Password.verify(req.body.password, user.password)
         ) {
-         
           let userData = {
+            id: user.id,
             name: user.name,
             username: user.username,
             phone: user.phone,
@@ -409,14 +480,29 @@ exports.login = [
             dob: user.dob,
             gender: user.gender,
             user_type: user.user_type,
-            language:user.language,
           };
           // user matched!
-          const secretKey = process.env.JWT_SECRET || "";
-          userData.token = jwt.sign({ id: user.id.toString() }, secretKey, {
-          expiresIn: process.env.JWT_TIMEOUT_DURATION,
-          });
+          // const secretKey = process.env.JWT_SECRET || "";
+          // userData.token = jwt.sign({ id: user.id.toString() }, secretKey, {
+          //   expiresIn: process.env.JWT_TIMEOUT_DURATION,
+          // });
 
+          var token = await jwt.sign(userData, "thisissecuritytoken", {
+            expiresIn: '365d'
+        });
+        userData.token = token;
+
+        //   if(typeof req.body.deviceToken !='undefined' && req.body.deviceToken !='' && typeof req.body.deviceType!='undefined' &&req. body.deviceType !=''){
+        //     await devicetokenModel.destroy({where:{deviceToken:req.body.deviceToken,deviceType:req.body.deviceType}});
+        //     await devicetokenModel.create({
+        //        user_id:user.id,
+        //        deviceToken:req.body.deviceToken,
+        //        deviceType:req.body.deviceType,
+        //        deviceName:req.body.deviceName?req.body.deviceName:null,
+        //        deviceVersion:req.body.deviceVersion?req.body.deviceVersion:null,
+        //        appVersion:req.body.appVersion?req.body.appVersion:null,
+        //     }); 
+        // }
           return apiResponse.successResponseWithData(
             res,
             "LoggedIn Successfully.",
@@ -573,8 +659,7 @@ exports.resetPassword = [
         if (user) {
           // if (user.otp == otp) {
           if (req.body.password) {
-   
-            const pass= Password.hash(req.body.password);
+            const pass = Password.hash(req.body.password);
             const result = await UserModel.update(
               { password: pass },
               { where: { id: user.id } }
@@ -607,3 +692,6 @@ exports.resetPassword = [
     }
   },
 ];
+
+
+

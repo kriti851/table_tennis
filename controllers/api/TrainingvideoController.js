@@ -1,13 +1,12 @@
 const VideotrainingModel = require("../../models/trainingvideo");
-const auth = require("../../middlewares/jwt");
 const { body, validationResult } = require("express-validator");
-const apiResponse = require("../../helpers/apiResponse");
+const auth = require("../../middlewares/jwt");
 const sequelize = require("../../config/db");
+const apiResponse = require("../../helpers/apiResponse");
 var path = require("path");
 const fs = require("fs-extra");
 const { v4: uuidv4 } = require("uuid");
 const multer = require("multer");
-const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
 require("dotenv").config();
 
@@ -101,6 +100,7 @@ exports.list = [
       let getvideo = await VideotrainingModel.findAll({
         order: [["id", "DESC"]],
         attributes: [
+          "user_id",
           "id",
           "title",
           "description",
@@ -139,12 +139,8 @@ exports.update = [
     .withMessage("Id is required"),
   body("title")
     .trim(),
-    // .isLength({ min: 1 })
-    // .withMessage("Id is required"),
   body("description")
     .trim(),
-    // .isLength({ min: 1 })
-    // .withMessage("Id is required"),
   async (req, res) => {
     var body = req.body;
     var errors = validationResult(req);

@@ -23,7 +23,7 @@ exports.detail = [
         if (!user) {
           return apiResponse.ErrorResponse(res, "Something went wrong");
         }
-          user.image = user.image ? process.env.IMAGEURL + 'public/uploads/' + user.image : process.env.IMAGEURL + 'public/uploads/default.png';
+          user.image = user.image ? process.env.IMAGEURL + user.image : process.env.IMAGEURL + 'public/uploads/default.png';
         return apiResponse.successResponseWithData(res, "Information reterive Successfully", user);
       } catch (err) {
         return apiResponse.ErrorResponse(res, err);

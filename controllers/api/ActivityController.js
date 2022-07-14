@@ -1,4 +1,4 @@
-const lactivityModel = require("../../models/activity");
+const activityModel = require("../../models/activity");
 const { body,validationResult,Check } = require("express-validator");
 const sequelize = require("../../config/db");
 const { Op } = require("sequelize");
@@ -6,7 +6,7 @@ const apiResponse = require("../../helpers/apiResponse");
 const auth = require("../../middlewares/jwt");
 const { ErrorResponse } = require("../../helpers/apiResponse");
 
-//Add Language
+//Add Activity
 exports.addactivity = [
     auth,
     body("activity_name")
@@ -42,7 +42,6 @@ exports.addactivity = [
                 "Activity added successfully",
                  info
             );
-
         }catch (err) {
             console.log(err);
             return apiResponse.ErrorResponse(res, err);
