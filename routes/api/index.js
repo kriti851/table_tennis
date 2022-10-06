@@ -15,7 +15,7 @@ var team_playerRouter =require("./team_player")
 var shortclipRouter =require("./shortclip")
 var articlerouter = require("./article");
 var languageRouter = require("./language");
-//var activityRouter = require("./activity");
+var activityRouter = require("./activity");
 var postRouter = require("./post");
 var apiResponse = require("../../helpers/apiResponse");
 var app = express();
@@ -42,7 +42,7 @@ app.use("/clip/",shortclipRouter);
 app.use("/article/", articlerouter);
 app.use("/promotion/", promotionrouter);
 app.use("/language/" , languageRouter);
-//app.use("/activity/" , activityRouter);
+app.use("/activity/" , activityRouter);
 
 // throw 404 if URL not found
 app.all("*", function(req, res) {
